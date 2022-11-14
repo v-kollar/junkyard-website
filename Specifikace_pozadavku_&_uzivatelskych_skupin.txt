@@ -1,0 +1,50 @@
+SPECIFIKACE POŽADAVKŮ NA APLIKACI A UŽIVATELSKÝCH SKUPIN
+
+Zadání: Sběrna surovin
+Typy uživatelů: Administrátor, zaměstnanec, registrovaný zákazník, nepřihlášený uživatel
+
+
+Požadavky:
+
+- přístup do neautorizované sekce (všichni uživatelé)
+
+--> EVIDENCE SBĚRŮ
+	- výkup sběru (zaměstnanec)
+		- od jakéhokoliv uživatele mimo nepřihlášeného
+		- vstup: výběr zákazníka (libovolného uživatele mimo nepřihlášeného); úprava času odevzdání (pokud se liší od času zadání do systému); typ materiálu, jeho množství (hmotnost) a orientační popis původu 
+			 (jeden sběr může obsahovat různé typy materiálů, jejich množství a původy)
+		- výstup: zobrazení ceny (pro informování zákazníka)
+	
+	- sledování historie svého sběru (všichni uživatelé mimo nepřihlášeného)
+		- včetně uvedení měsíčních částek k vyplacení uživateli
+		- zobrazení tabulky sběrů dle různých časových hledisek (měsíc, půl roku, rok)
+	
+	- sledování statistik sběrny za rok (všichni uživatelé)
+		- zobrazení tabulek po jednotlivých materiálech, sesbírané množství, měsíc roku
+	
+	- sledování aktuální ceny materiálů (všichni uživatelé)
+
+--> SPRÁVA UŽIVATELŮ
+	- přihlášení uživatele (nepřihlášený uživatel)
+		- vstup: email, heslo
+	
+	- odhlášení uživatele (všichni uživatelé mimo nepřihlášeného)
+
+	- registrace uživatele (nepřihlášený uživatel)
+		- Vstup: jméno, příjmení, heslo, email, telefon, adresa trvalého bydliště, adresa dočasného bydliště, číslo účtu
+		- po odeslání registrace dojde k automatickému zadání požadavku na potvrzení uživatele zaměstnancem
+		- do doby, kdy není účet potvrzen, není aktivní
+
+	- změna svých údajů (všichni uživatelé mimo nepřihlášeného)
+		- změna jména, příjmení, hesla, emailu, telefonu, adresy trvalého bydliště, adresy dočasného bydliště, čísla účtu
+
+	- potvrzení registrace zákazníků (zaměstnanec, administrátor)
+		- zaměstnanec potvrzuje registraci uživatelů na základě kontroly správnosti zadaných údajů z OP
+		- Vstup: Výběr požadavku konkrétního uživatele, případná změna libovolného údaje
+
+--> SPRÁVA SYSTÉMU
+	- úprava ceníku (administrátor)
+		- vstup: volba materiálu, změna ceny
+	
+	- absolutní správa uživatelů (administrátor)
+		- úprava jakéhokoliv uživatele, změna role, vytvoření uživatele bez nutnosti potvrzení
