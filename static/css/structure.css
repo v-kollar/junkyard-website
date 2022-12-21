@@ -1,0 +1,77 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+section {
+    width: 100%;
+
+}
+.kola {
+    text-align: center;
+}
+
+section h1 {
+    padding: 30px 10px 0;
+    line-height: 25px;
+}
+
+section h2 {
+    padding: 5px 10px 0;
+    line-height: 25px;
+    text-align: center;
+}
+
+section p {
+    padding: 0 10px 0;
+
+}
+
+.banner {
+    width: 100%;
+}
+
+.dot {
+    height: 25px;
+    width: 100px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+
+}
+
+@media only screen and (min-width: 768px) {
+    section {
+        width: 80%;
+        margin: 0 auto;
+        text-align: left;
+    }
+
+    section h1 {
+        padding: 20px 0 0;
+        line-height: 25px;
+}
+
+    section h2 {
+        padding: 20px 0 0;
+        line-height: 25px;
+}
+
+    section p {
+        padding: 20px 0 0;
+}
+
+    .banner {
+        padding-top: 30px;
+    }
+
+    .kola h2{
+        text-align: left;
+}
+
+    div {
+        display: inline-block;
+}
+}
+
+
