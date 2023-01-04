@@ -32,12 +32,15 @@ section p {
 }
 
 .dot {
-    height: 25px;
-    width: 100px;
+    height: 70px;
+    width: 300px;
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
 
+}
+span p {
+    padding-top: 25px;
 }
 
 @media only screen and (min-width: 768px) {
@@ -55,15 +58,12 @@ section p {
     section h2 {
         padding: 20px 0 0;
         line-height: 25px;
+        margin-left: 30px;
 }
 
     section p {
         padding: 20px 0 0;
 }
-
-    .banner {
-        padding-top: 30px;
-    }
 
     .kola h2{
         text-align: left;
@@ -72,6 +72,15 @@ section p {
     div {
         display: inline-block;
 }
+    .dot {
+    height: 200px;
+    width: 200px;
+}
+    section button {
+}
+    span p {
+        padding-top: 90px;
+    }
 }
 
 
