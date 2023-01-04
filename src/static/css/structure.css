@@ -37,10 +37,14 @@ section p {
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
+    margin-left: 5%;
 
 }
 span p {
     padding-top: 25px;
+}
+section button {
+    margin-left: 45%;
 }
 
 @media only screen and (min-width: 768px) {
@@ -76,11 +80,33 @@ span p {
     height: 200px;
     width: 200px;
 }
-    section button {
-}
+
     span p {
         padding-top: 90px;
     }
+    section button {
+        margin-left: 350px;
+
+
+    }
+    nav {
+
+        width: 100%;
+    }
+    nav ul {
+        float: right;
+        list-style: none;
+        box-sizing: border-box;
+        padding-right: 20%;
+    }
+    nav ul li {
+        display: inline-block;
+        margin: 0 30px;
+    }
+    nav ul li a {
+        text-decoration: none;
+    }
+
 }
 
 
