@@ -1,0 +1,31 @@
+{% extends 'main.jinja2' %}
+{% block title %}<title>Sběrné suroviny</title>{% endblock %}
+{% block content %}
+
+        <section>
+        <img  alt="Fotka sběrny" src="{{ url_for('static',filename='img/sberna.jpg') }}" class="banner">
+        <h1>Stručně o sběrně</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta dolor eligendi illo incidunt quae quas qui soluta vero vitae voluptas! Aliquid autem debitis deleniti quasi quo quod suscipit tempore velit? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt facilis id omnis tempora! Doloremque iste nesciunt nulla! Accusamus accusantium beatae blanditiis eveniet fuga hic magni officiis, ratione reiciendis sed. Eveniet.</p>
+        </section>
+        <section class="kola">
+        <div>
+        <h2>Kolik materiálu jsme zpracovali za rok?</h2>
+        <span class="dot"><p>Test</p></span>
+        </div>
+            <div>
+            <h2>A kolik jsme vám za něj zaplatili</h2>
+        <span class="dot"><p>Test</p></span>
+        </div>
+        </section>
+        <section>
+        <h2>Jak to funguje</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus aliquid consequatur debitis dolores error ex hic ipsum laborum maxime, perferendis provident quia quos veniam? Accusamus dolorem et magni molestias quisquam!</p>
+        </section>
+        <section>
+        <button type="button" onclick="">Chci sbírat</button>
+        </section>
+        
+        
+
+
+{% endblock %}
