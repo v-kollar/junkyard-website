@@ -2,6 +2,11 @@
     margin: 0;
     padding: 0;
 }
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
 section {
     width: 100%;
@@ -154,6 +159,21 @@ ul {
 #check:checked ~ ul {
     left: 0;
 }
+footer {
+    text-align: center;
+    background-color: gray;
+    padding: 7px 13px;
+    margin-top: auto;
+    
+}
+.block button {
+    padding: 20px 60px 20px 60px;
+    margin-left: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    background-color: #66A449;
+    cursor: pointer;
+}
 
 @media only screen and (min-width: 1080px) {
     section {
@@ -220,6 +240,7 @@ ul {
         display: inline-block;
         
     }
+
 
 
 
