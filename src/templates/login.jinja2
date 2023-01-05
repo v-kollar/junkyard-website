@@ -1,5 +1,18 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Přihlášení</title>{% endblock %}
 {% block content %}
-    <h1>Tohle je přihlašovací stránka</h1>
+<div class="container">
+    <form action="">
+        <h1>Přihlášení</h1>
+        <div class="form-group">
+            <label for="">Email</label>
+            <input type="text" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="">Heslo</label>
+            <input type="password" class="form-control" required>
+        </div>
+        <input type="submit" class="btn" value="Přihlásit se">
+    </form>
+</div>
 {% endblock %}
