@@ -1,6 +1,10 @@
 {% block nav %}
     <nav>
-        <label class="logo"><a href="{{ url_for('home') }}">Sběrna</a></label>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+        &#9776;
+        </label>
+        <label class="logo">Sběrna</label>
         <ul>
             <li><a href="{{ url_for('home') }}">DOMOV</a></li>
             <li><a href="{{ url_for('stats') }}">STATISTIKY</a></li>

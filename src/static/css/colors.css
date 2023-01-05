@@ -11,3 +11,28 @@ section {
 .container form, .reg_container form {
     background: #C9F9B2;
 }
+nav ul li a{ 
+    color: white;
+}
+.logo {
+    color: white;
+}
+nav {
+    background: #66A449;
+}
+.checkbtn {
+    color: white;
+}
+ul {
+    background: #B1CDA3;
+}
+@media only screen and (min-width: 1080px) {
+    ul {
+        background: #66A449;
+    }
+    a.active, a:hover {
+        background: #B1CDA3;
+    }
+
+
+}
