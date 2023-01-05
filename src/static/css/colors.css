@@ -8,7 +8,7 @@ section {
 .dot {
     background-color: #B1CDA3;
 }
-.container form {
+.container form, .reg_container form {
     background: #C9F9B2;
 }
 nav ul li a{ 
