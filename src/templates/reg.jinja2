@@ -1,11 +1,11 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Registrace</title>{% endblock %}
 {% block content %}
-<div class="container">
+<div class="reg_container">
     
     <form action="">
         <h1>Registrace</h1>
-
+        
         <div class="form-group">
             <label for="">Jméno</label>
             <input type="text" class="form-control" required maxlength="32">
@@ -15,7 +15,7 @@
             <label for="">Příjmení</label>
             <input type="text" class="form-control" required maxlength="32">
         </div>
-
+    
         <div class="form-group">
             <label for="">Adresa trvalého bydliště</label>
             <input type="text" class="form-control" required maxlength="50">
@@ -46,7 +46,7 @@
             <input type="text" class="form-control" required maxlength="32">
         </div>
 
-        <input type="submit" class="btn" value="Přihlásit se">
+        <input type="submit" class="btn" value="Registrovat se">
     </form>
 </div>
 {% endblock %}
