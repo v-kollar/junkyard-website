@@ -8,7 +8,7 @@ def home():
     return render_template("index.jinja2")
 
 
-@app.route('/statisky')
+@app.route('/statistiky')
 def stats():
     return render_template("stats.jinja2")
 
