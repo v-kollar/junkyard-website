@@ -46,7 +46,7 @@ section button {
     margin-left: 45%;
 }
 .container {
-    margin: auto;
+    margin: 30px auto auto auto;
     width: 500px;
     max-width: 90%;
 }
@@ -84,7 +84,7 @@ section button {
 
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 855px) {
     section {
         width: 80%;
         margin: 0 auto;
@@ -123,26 +123,40 @@ section button {
     }
     section button {
         margin-left: 350px;
-
-
     }
     nav {
 
-        width: 100%;
+        background: #66A449;
+
+    }
+    nav ul li a{ 
+        text-decoration: none;
+        color: white;
+        font-size: 17px;
+        text-transform: uppercase;
+
+    }
+    .logo {
+        color: white;
+        font-size: 35px;
+        line-height: 80px;
+        padding: 0 100px;
+        font-weight: bold;
+
     }
     nav ul {
         float: right;
-        list-style: none;
         box-sizing: border-box;
-        padding-right: 20%;
+        list-style: none;
+        margin-right: 40px;
     }
     nav ul li {
         display: inline-block;
+        line-height: 80px;
         margin: 0 30px;
+
     }
-    nav ul li a {
-        text-decoration: none;
-    }
+
 
 
 }
