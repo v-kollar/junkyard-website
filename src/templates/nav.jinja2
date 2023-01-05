@@ -1,6 +1,6 @@
 {% block nav %}
     <nav>
-        <label class="logo">Sběrna</label>
+        <label class="logo"><a href="{{ url_for('home') }}">Sběrna</a></label>
         <ul>
             <li><a href="{{ url_for('home') }}">DOMOV</a></li>
             <li><a href="{{ url_for('stats') }}">STATISTIKY</a></li>

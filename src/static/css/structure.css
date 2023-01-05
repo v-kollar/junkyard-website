@@ -136,8 +136,9 @@ section button {
         text-transform: uppercase;
 
     }
-    .logo {
+    .logo a {
         color: white;
+        text-decoration: none;
         font-size: 35px;
         line-height: 80px;
         padding: 0 100px;
