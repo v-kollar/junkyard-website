@@ -79,7 +79,7 @@ section button {
 }
 
 .form-group {
-    width: 496px;
+    width: 100%;
     display: inline-block;
     
 }
@@ -100,7 +100,7 @@ section button {
 
 }
 
-@media only screen and (min-width: 855px) {
+@media only screen and (min-width: 1118px) {
     section {
         width: 80%;
         margin: 0 auto;
@@ -172,6 +172,12 @@ section button {
         line-height: 80px;
         margin: 0 30px;
 
+    }
+
+    .form-group {
+        width: 496px;
+        display: inline-block;
+        
     }
 
 
