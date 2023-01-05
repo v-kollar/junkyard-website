@@ -76,18 +76,16 @@ span p {
     border: 1px solid silver;
     margin: 10px 0 18px 0;
 }
-
 .form-group {
     width: 100%;
     display: inline-block;
     
 }
-
 .form-group label {
     display: block;
     text-align: center;
 }
-.container form .btn, .reg_container form .btn{
+.container form .btn, .reg_container .btn {
     margin-left: 50%;
     transform: translateX(-50%);
     width: 120px;
@@ -158,7 +156,6 @@ ul {
 }
 
 @media only screen and (min-width: 1080px) {
-
     section {
         width: 80%;
         margin: 0 auto;
@@ -195,16 +192,6 @@ ul {
     span p {
         padding-top: 90px;
     }
-    
-    
-    
-    
-    nav ul li a{ 
-        text-decoration: none;
-        color: white;
-        font-size: 17px;
-        text-transform: uppercase;
-
 
     .checkbtn {
         display: none;
@@ -217,13 +204,6 @@ ul {
         /*top: auto;*/
         /*left: auto;*/
         transition: 0s;
-    .logo a {
-        color: white;
-        text-decoration: none;
-        font-size: 35px;
-        line-height: 80px;
-        padding: 0 100px;
-        font-weight: bold;
 
     }
     nav ul li {
@@ -235,14 +215,12 @@ ul {
         z-index: auto;
     }
 
-
-
-
     .form-group {
         width: 496px;
         display: inline-block;
         
     }
+
 
 
 
