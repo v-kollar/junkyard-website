@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, flash
 import sqlite3
 app = Flask(__name__)
 app.secret_key = "klic"
@@ -6,7 +6,15 @@ app.secret_key = "klic"
 
 @app.route('/')
 def home():
-    return render_template("index.jinja2")
+    connection = sqlite3.connect('sberna.db')
+    cursor = connection.cursor()
+    query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM (SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
+    cursor.execute(query)
+    weight = cursor.fetchall()
+    query = "SELECT SUM(cena) vyplaceni_za_rok FROM (SELECT sbery.id_sberu, SUM(cena) cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
+    cursor.execute(query)
+    paid=cursor.fetchall()
+    return render_template("index.jinja2",weight=str(round(weight[0][0]))+" T",paid=str(round(paid[0][0]))+" Kč")
 
 
 @app.route('/statistiky')
@@ -14,9 +22,20 @@ def stats():
     return render_template("stats.jinja2")
 
 
-@app.route('/cenik')
+@app.route('/cenik',methods=['GET','POST'])
 def pricelist():
-    return render_template("pricelist.jinja2")
+    connection = sqlite3.connect('sberna.db')
+    cursor = connection.cursor()
+    if request.method == 'POST':
+            search = request.form['search']
+            query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND nazev= '"+search+"' AND datum_do >= datetime('now')"
+            cursor.execute(query)
+            results = cursor.fetchall()
+            return render_template("pricelist.jinja2",materials=results)
+    query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now')"
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return render_template("pricelist.jinja2",materials=results)
 
 
 @app.route('/prihlaseni', methods=['GET','POST'])
@@ -29,7 +48,6 @@ def login():
         query = "SELECT jmeno,prijmeni,email,heslo FROM uzivatel WHERE email= '"+email+"' AND heslo= '"+password+"'"
         cursor.execute(query)
         results = cursor.fetchall()
-        #print(name,password)
         if len(results) == 0:
             return render_template("login.jinja2")
         else:
@@ -51,6 +69,7 @@ def profile():
 
 @app.route('/odhlaseni')
 def logout():
+    flash("Byli jste odhlaseni", category="success")
     session.pop("user", None)
     return redirect('/prihlaseni')
 
