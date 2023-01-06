@@ -46,14 +46,16 @@ def login():
     if request.method == 'POST':
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
-        email = request.form['email']
-        password = request.form['password']
-        query = "SELECT jmeno,prijmeni,email,heslo FROM uzivatel WHERE email= '"+email+"' AND heslo= '"+password+"'"
+        query = "SELECT jmeno,prijmeni,email,heslo,potvrzeni FROM uzivatel WHERE email= '"+request.form['email']+"' AND heslo= '"+request.form['password']+"'"
         cursor.execute(query)
         results = cursor.fetchall()
+        print(results[0][4])
         if len(results) == 0:
             connection.close()
             flash("Zadali jste špatné přihlašovací údaje", category="error")
+            return render_template("login.jinja2")
+        elif results[0][4] == 0:
+            flash("Váš účet nebyl potvrzen", category="error")
             return render_template("login.jinja2")
         else:
             session["user"]=results
@@ -79,8 +81,19 @@ def logout():
     session.pop("user", None)
     return redirect('/prihlaseni')
 
-@app.route('/registrace')
+@app.route('/registrace', methods=['GET','POST'])
 def reg():
+    if request.method == 'POST':
+        connection = sqlite3.connect('sberna.db')
+        temp_stay = request.form['temp_stay'] 
+        if len(temp_stay) == 0:
+            temp_stay = "null"
+        else:
+            temp_stay = request.form['temp_stay']
+        query="INSERT INTO uzivatel (potvrzeni, jmeno, prijmeni, email, heslo, telefon, adresa_trvaleho_bydliste, adresa_docasneho_bydliste, cislo_uctu, id_role) VALUES(0, '"+request.form['first_name']+"', '"+request.form['last_name']+"', '"+request.form['email']+"', '"+request.form['password']+"', '"+request.form['phone']+"', '"+request.form['permanent_stay']+"', '"+request.form['temp_stay']+"', '"+request.form['bank_id']+"', 3);"
+        connection.execute(query)
+        connection.commit()
+
     return render_template("reg.jinja2")
 
 @app.route('/zmena_svych_udaju')
