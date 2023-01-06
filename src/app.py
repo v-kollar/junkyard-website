@@ -44,7 +44,7 @@ def login():
 @app.route('/profile/')
 def profile():
     if "user" in session:
-        return render_template("profile.jinja2",name=session["user"])
+        return render_template("profile.jinja2")
     else:
         return redirect('/prihlaseni')
 
