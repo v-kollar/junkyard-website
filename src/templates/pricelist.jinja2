@@ -1,5 +1,42 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Ceník</title>{% endblock %}
 {% block content %}
-    <h1>Tohle je stránka s ceníkem</h1>
+
+<!-- Move icon to separate file? -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<h1 style="margin-left:40px;margin-top: 20px;margin-bottom: 20px;">
+Ceník
+</h1>
+
+<form class="pricelist__search">
+<label>
+Vyhledávání:
+</label>
+<input type="text" placeholder="Řekni more za kolik..." name="search">
+<button type="submit"><i class="fa fa-search"></i></button>
+</form>
+
+
+<div class="pricelist__results">
+
+<table style="width:100%;padding-top:20px;padding-left:40px;padding-right:40px;padding-bottom:20px;text-align:center;background-color:white;">
+   <tr>
+    <th style="width:65%;padding-top:20px;padding-bottom:30px;font-size:30px;">Název</th>
+		<th style="padding-top:20px;padding-bottom:30px;font-size:30px;">Cena/Kg</th>
+	 </tr>
+
+   <tr>
+    <td>Cell A1</td>
+    <td>Cell B1</td>
+   </tr>
+   <tr>
+    <td>Cell A2</td>
+    <td>Cell B2</td>
+   </tr>
+  </table>
+
+<div>
+
+
 {% endblock %}
