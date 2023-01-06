@@ -62,7 +62,20 @@ GROUP BY strftime('%Y',cas_odevzdani)
 -----------------------------------------------------
 
 5. HISTORIE SVÉHO SBĚRU (MOJE SBĚRY)
+-- datum, castka
+SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka FROM sbery 
+JOIN polozka ON (sbery.id_sberu = polozka.id_sberu)
+JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
+WHERE id_uzivatele = 2
+GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani)
+ORDER BY datum DESC
 
+-- detail sberu
+SELECT nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery
+JOIN polozka ON (sbery.id_sberu = polozka.id_sberu)
+JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
+JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu)
+WHERE id_uzivatele = 2 AND STRFTIME('%Y-%m-%d', cas_odevzdani) = '2005-01-10' 
 
 
 -----------------------------------------------------
