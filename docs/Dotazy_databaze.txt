@@ -58,3 +58,58 @@ FROM sbery
 JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) 
 JOIN ceny ON (polozka.id_ceny = ceny.id_ceny)
 GROUP BY strftime('%Y',cas_odevzdani)
+
+-----------------------------------------------------
+
+5. HISTORIE SVÉHO SBĚRU (MOJE SBĚRY)
+
+
+
+-----------------------------------------------------
+
+6. PRÁCE S UŽIVATELI
+A. VYPIS ROLI PRO ROZBALOVACI NABIDKU
+SELECT * FROM role
+
+B. PŘIDÁNÍ
+INSERT INTO uzivatel (potvrzeni, jmeno, prijmeni, email, heslo, telefon, adresa_trvaleho_bydliste, adresa_docasneho_bydliste, cislo_uctu, id_role)
+VALUES(0, 'Jan', 'Babak', 'deda@baba.ba', '123456', '745122344', 'Vejvary 123, 88390 Vejvary', null, '1234456', 3);
+
+C. VÝMAZ
+DELETE FROM uzivatel
+WHERE id_uzivatele = 6;
+
+D. EDITACE
+UPDATE uzivatel
+SET prijmeni = 'Kulicka'
+WHERE id_uzivatele = 7;
+
+E. BAN/POTVRZENÍ REGISTRACE (potvrzeni 0 nebo 1)
+UPDATE uzivatel
+SET potvrzeni = 1
+WHERE id_uzivatele = 7;
+
+-----------------------------------------------------
+
+7. PŘIDÁNÍ ZÁZNAMU O SBĚRU
+
+--dostupne typy materialu, ktere maji cenu a jejich cena s id
+SELECT nazev, cena, id_ceny FROM typy_materialu
+JOIN ceny ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu)
+WHERE datum_od <= datetime('now') AND datum_do >= datetime('now')
+WHERE ceny.id_typu_materialu = 1
+
+--zjisteni ceny konkretniho materialu
+SELECT cena FROM typy_materialu
+JOIN ceny ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu)
+WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND ceny.id_typu_materialu = 1
+
+--vytvoreni sberu
+INSERT INTO sbery (cas_odevzdani, id_uzivatele)
+VALUES(datetime('now'), 3)
+
+--pridani polozky
+INSERT INTO polozka (mnozstvi, puvod, id_typu_materialu, id_sberu, id_ceny)
+VALUES(35, 'kradez', 1, 5, 1)
+
+
