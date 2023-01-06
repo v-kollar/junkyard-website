@@ -14,6 +14,7 @@ def home():
     query = "SELECT SUM(cena) vyplaceni_za_rok FROM (SELECT sbery.id_sberu, SUM(cena) cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
     cursor.execute(query)
     paid=cursor.fetchall()
+    connection.close()
     return render_template("index.jinja2", weight=str(round(weight[0][0]))+" T", paid=str(round(paid[0][0]))+" Kč")
 
 
@@ -31,10 +32,12 @@ def pricelist():
             query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND nazev= '"+search+"' AND datum_do >= datetime('now')"
             cursor.execute(query)
             results = cursor.fetchall()
+            connection.close()
             return render_template("pricelist.jinja2",materials=results)
     query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now')"
     cursor.execute(query)
     results = cursor.fetchall()
+    connection.close()
     return render_template("pricelist.jinja2",materials=results)
 
 
@@ -49,9 +52,12 @@ def login():
         cursor.execute(query)
         results = cursor.fetchall()
         if len(results) == 0:
+            connection.close()
+            flash("Zadali jste špatné přihlašovací údaje", category="error")
             return render_template("login.jinja2")
         else:
             session["user"]=results
+            connection.close()
             return redirect('/profile/')
     else:
         if "user" in session:
@@ -69,7 +75,7 @@ def profile():
 
 @app.route('/odhlaseni')
 def logout():
-    flash("Byli jste odhlaseni", category="success")
+    flash("Byli jste odhlášeni", category="success")
     session.pop("user", None)
     return redirect('/prihlaseni')
 
