@@ -49,7 +49,6 @@ def login():
         query = "SELECT jmeno,prijmeni,email,heslo,potvrzeni FROM uzivatel WHERE email= '"+request.form['email']+"' AND heslo= '"+request.form['password']+"'"
         cursor.execute(query)
         results = cursor.fetchall()
-        print(results[0][4])
         if len(results) == 0:
             connection.close()
             flash("Zadali jste špatné přihlašovací údaje", category="error")
@@ -85,14 +84,29 @@ def logout():
 def reg():
     if request.method == 'POST':
         connection = sqlite3.connect('sberna.db')
-        temp_stay = request.form['temp_stay'] 
-        if len(temp_stay) == 0:
-            temp_stay = "null"
+        cursor = connection.cursor()
+        query ="SELECT email,telefon FROM uzivatel WHERE telefon='"+request.form['phone']+"' OR email='"+request.form['email']+"'"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        if (len(results) == 0):
+            temp_stay = request.form['temp_stay'] 
+            if len(temp_stay) == 0:
+                temp_stay = "null"
+            else:
+                temp_stay = request.form['temp_stay']
+            query="INSERT INTO uzivatel (potvrzeni, jmeno, prijmeni, email, heslo, telefon, adresa_trvaleho_bydliste, adresa_docasneho_bydliste, cislo_uctu, id_role) VALUES(0, '"+request.form['first_name']+"', '"+request.form['last_name']+"', '"+request.form['email']+"', '"+request.form['password']+"', '"+request.form['phone']+"', '"+request.form['permanent_stay']+"', '"+request.form['temp_stay']+"', '"+request.form['bank_id']+"', 3);"
+            connection.execute(query)
+            connection.commit()
+            flash("Byli jste zaregistrování", category="success")
+            return render_template("reg.jinja2")
+
         else:
-            temp_stay = request.form['temp_stay']
-        query="INSERT INTO uzivatel (potvrzeni, jmeno, prijmeni, email, heslo, telefon, adresa_trvaleho_bydliste, adresa_docasneho_bydliste, cislo_uctu, id_role) VALUES(0, '"+request.form['first_name']+"', '"+request.form['last_name']+"', '"+request.form['email']+"', '"+request.form['password']+"', '"+request.form['phone']+"', '"+request.form['permanent_stay']+"', '"+request.form['temp_stay']+"', '"+request.form['bank_id']+"', 3);"
-        connection.execute(query)
-        connection.commit()
+            if (results[0][0] == request.form['email']):
+                flash("Zadaný e-mail je již používán", category="error")
+                return render_template("reg.jinja2")
+            else:
+                flash("Zadaný telefon je již používán", category="error")
+                return render_template("reg.jinja2")
 
     return render_template("reg.jinja2")
 
