@@ -1,0 +1,24 @@
+{% extends 'main.jinja2' %}
+{% block title %}<title>Registrace</title>{% endblock %}
+{% block content %}
+<div class="reg_container">
+    
+    <form action="">
+        <h1>Přidání materiálu</h1>
+        
+        <div class="form-group">
+            <label for="">Název</label>
+            <input type="text" class="form-control" required maxlength="32">
+        </div>
+
+        <div class="form-group">
+            <label for="">Cena</label>
+            <input type="text" class="form-control" required maxlength="32">
+        </div>
+    
+        
+        <input type="submit" class="btn" value="Přidat">
+        
+    </form>
+</div>
+{% endblock %}
