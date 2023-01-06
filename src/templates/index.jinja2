@@ -10,11 +10,11 @@
         <section class="circles">
         <div class="block">
         <h2>Kolik materiálu jsme zpracovali za rok?</h2>
-        <span class="dot"><p>Test</p></span>
+        <span class="dot"><p>{{weight}}</p></span>
         </div>
         <div class="block">
         <h2>A kolik jsme vám za něj zaplatili</h2>
-        <span class="dot"><p>Test</p></span>
+        <span class="dot"><p>{{paid}}</p></span>
         </div>
         </section>
         <section>
@@ -23,7 +23,7 @@
         </section>
         <section class="circles">
         <div class="block">
-        <button type="button" onclick="">CHCI SBÍRAT</button>
+        <button type="button" onclick="location.href='{{ url_for('reg') }}'">CHCI SBÍRAT</button>
         </div>
         </section>
         
