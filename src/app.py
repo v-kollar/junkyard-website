@@ -14,7 +14,7 @@ def home():
     query = "SELECT SUM(cena) vyplaceni_za_rok FROM (SELECT sbery.id_sberu, SUM(cena) cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
     cursor.execute(query)
     paid=cursor.fetchall()
-    return render_template("index.jinja2",weight=str(round(weight[0][0]))+" T",paid=str(round(paid[0][0]))+" Kč")
+    return render_template("index.jinja2", weight=str(round(weight[0][0]))+" T", paid=str(round(paid[0][0]))+" Kč")
 
 
 @app.route('/statistiky')
