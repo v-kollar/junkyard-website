@@ -161,16 +161,42 @@ def application_for_registration():
     else:
         return redirect('/profile/')
 
-@app.route('/pridani_uzivatele')
+@app.route('/profile/sprava/pridat_uzivatele',methods=['GET','POST'])
 def create_user():
+    connection = sqlite3.connect('sberna.db')
+    if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
+        cursor = connection.cursor()
+        query ="SELECT email,telefon FROM uzivatel WHERE telefon='"+request.form['phone']+"' OR email='"+request.form['email']+"'"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        if (len(results) == 0):
+            print(request.form['role'])
+            query="INSERT INTO uzivatel (potvrzeni, jmeno, prijmeni, email, heslo, telefon, adresa_trvaleho_bydliste, adresa_docasneho_bydliste, cislo_uctu, id_role) VALUES(1, '"+request.form['first_name']+"', '"+request.form['last_name']+"', '"+request.form['email']+"', '"+request.form['password']+"', '"+request.form['phone']+"', '"+request.form['permanent_stay']+"', '"+request.form['temp_stay']+"', '"+request.form['bank_id']+"', '"+request.form['role']+"');"
+            connection.execute(query)
+            connection.commit()
+            flash("Uživatel byl vytvořen", category="success")
+            return redirect('/profile/sprava/pridat_uzivatele')
+
+        else:
+            if (results[0][0] == request.form['email']):
+                flash("Zadaný e-mail je již používán", category="error")
+                return redirect('/profile/sprava/pridat_uzivatele')
+            else:
+                flash("Zadaný telefon je již používán", category="error")
+                return redirect('/profile/sprava/pridat_uzivatele')
+
     if "user" in session and session['user'][0][2] == 1:
-        return render_template("create_user.jinja2")
+        cursor = connection.cursor()
+        query = "SELECT * FROM role"
+        cursor.execute(query)
+        roles=cursor.fetchall()
+        return render_template("create_user.jinja2", roles=roles)
     else:
         return redirect('/profile/')
     
 
 
-@app.route('/uprava_uzivatele')
+@app.route('/profile/sprava/uprava_uzivatele')
 def edit_user():
     if "user" in session and session['user'][0][2] == 1:
         return render_template("edit_user.jinja2")
@@ -191,8 +217,11 @@ def add_material():
 def collection_details():
     return render_template("details.jinja2")
 
-@app.route('/profile/sprava')
+@app.route('/profile/sprava',methods=['GET','POST'])
 def user_management():
+    if request.method == 'POST':
+        print(request.form['user_id'])
+        print(request.form['phone'])
     if "user" in session and session['user'][0][2] == 1:
         return render_template('management.jinja2')
     else:
@@ -200,10 +229,18 @@ def user_management():
     
 
 
-@app.route('/profile/moje-sbery')
+@app.route('/profile/moje-sbery')#methods=['GET','POST']
 def my_collections():
+    #if request.method == 'POST':
+    #    print("test")
     if "user" in session:
-        return render_template('my_collections.jinja2')
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
+        cursor.execute(query)
+        collections=cursor.fetchall()
+        return render_template('my_collections.jinja2',collections=collections)
+
     else:
         return redirect('/profile/')
 
