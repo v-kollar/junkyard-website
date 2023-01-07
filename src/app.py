@@ -58,7 +58,7 @@ def login():
     if request.method == 'POST':
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
-        query = "SELECT potvrzeni,id_uzivatele,jmeno,prijmeni,email,telefon,adresa_trvaleho_bydliste,adresa_docasneho_bydliste,cislo_uctu,id_role  FROM uzivatel WHERE email= '"+request.form['email']+"' AND heslo= '"+request.form['password']+"'"
+        query = "SELECT potvrzeni,id_uzivatele,id_role  FROM uzivatel WHERE email= '"+request.form['email']+"' AND heslo= '"+request.form['password']+"'"
         cursor.execute(query)
         results = cursor.fetchall()
         if len(results) == 0:
@@ -117,10 +117,30 @@ def reg():
 
     return render_template("reg.jinja2")
 
-@app.route('/profile/zmena_svych_udaju')
+@app.route('/profile/zmena_svych_udaju',methods=['GET','POST'])
 def change_your_details():
     if "user" in session:
-        return render_template("change_your_details.jinja2")
+        if request.method == 'POST':
+            connection = sqlite3.connect('sberna.db')
+            cursor = connection.cursor()
+            query = "SELECT heslo FROM uzivatel WHERE id_uzivatele='"+str(session["user"][0][1])+"'"
+            cursor.execute(query)
+            result = cursor.fetchall()
+            if (len(request.form['password'])==0):
+                newpassword=result[0][0]
+            else:
+                newpassword=request.form['password']
+            query="UPDATE uzivatel SET jmeno='"+request.form['first_name']+"', prijmeni='"+request.form['last_name']+"',adresa_trvaleho_bydliste='"+request.form['permanent_stay']+"', adresa_docasneho_bydliste='"+request.form['temp_stay']+"', telefon='"+request.form['phone']+"', cislo_uctu='"+request.form['bank_id']+"',heslo='"+newpassword+"' WHERE id_uzivatele='"+str(session['user'][0][1])+"'"
+            connection.execute(query)
+            connection.commit()
+            flash("Údaje byly aktualizovány", category="success")
+
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query = "SELECT jmeno,prijmeni,adresa_trvaleho_bydliste, adresa_docasneho_bydliste, email, telefon, cislo_uctu, heslo FROM uzivatel WHERE id_uzivatele='"+str(session["user"][0][1])+"'"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return render_template("change_your_details.jinja2",first_name=result[0][0],last_name=result[0][1],permanent_stay=result[0][2],temp_stay=result[0][3],email=result[0][4],phone=result[0][5],bank_id=result[0][6])
     else:
         return redirect('/profile/')
     
@@ -151,7 +171,7 @@ def collection_details():
 
 @app.route('/profile/sprava')
 def user_management():
-    if "user" in session and session['user'][0][9] == 1:
+    if "user" in session and session['user'][0][2] == 1:
         return render_template('management.jinja2')
     else:
         return redirect('/profile/')
