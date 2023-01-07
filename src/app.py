@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, flash, template_rendered
+from flask import Flask, render_template, request, session, redirect, flash, template_rendered, url_for
 import sqlite3
 app = Flask(__name__)
 app.secret_key = "klic"
@@ -196,10 +196,34 @@ def create_user():
     
 
 
-@app.route('/profile/sprava/uprava_uzivatele')
+@app.route('/profile/sprava/uprava_uzivatele',methods=['GET','POST'])
 def edit_user():
     if "user" in session and session['user'][0][2] == 1:
-        return render_template("edit_user.jinja2")
+        user_id = request.args['user_id']
+        if request.method == 'POST':
+            connection = sqlite3.connect('sberna.db')
+            cursor = connection.cursor()
+            query = "SELECT heslo FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
+            cursor.execute(query)
+            result = cursor.fetchall()
+            if (len(request.form['password'])==0):
+                newpassword=result[0][0]
+            else:
+                newpassword=request.form['password']
+            query="UPDATE uzivatel SET jmeno='"+request.form['first_name']+"', prijmeni='"+request.form['last_name']+"',adresa_trvaleho_bydliste='"+request.form['permanent_stay']+"', adresa_docasneho_bydliste='"+request.form['temp_stay']+"', telefon='"+request.form['phone']+"', cislo_uctu='"+request.form['bank_id']+"',heslo='"+newpassword+"' WHERE id_uzivatele='"+user_id+"'"
+            connection.execute(query)
+            connection.commit()
+            flash("Údaje byly aktualizovány", category="success")
+            return redirect(url_for('user_management'))
+
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query = "SELECT jmeno,prijmeni,adresa_trvaleho_bydliste, adresa_docasneho_bydliste, email, telefon, cislo_uctu, heslo FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return render_template("edit_user.jinja2",first_name=result[0][0],last_name=result[0][1],permanent_stay=result[0][2],temp_stay=result[0][3],email=result[0][4],phone=result[0][5],bank_id=result[0][6])
+
+        
     else:
         return redirect('/profile/')
     
@@ -220,8 +244,16 @@ def collection_details():
 @app.route('/profile/sprava',methods=['GET','POST'])
 def user_management():
     if request.method == 'POST':
-        print(request.form['user_id'])
-        print(request.form['phone'])
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query = "SELECT id_uzivatele FROM uzivatel WHERE id_uzivatele='"+request.form['user_id']+"' OR telefon='"+request.form['phone']+"'"
+        cursor.execute(query)
+        results=cursor.fetchall()
+        if len(results) != 0:
+            return redirect(url_for('edit_user', user_id=request.form['user_id']))
+        else:
+            flash("Uživatele nelze najít", category="error")
+            
     if "user" in session and session['user'][0][2] == 1:
         return render_template('management.jinja2')
     else:
