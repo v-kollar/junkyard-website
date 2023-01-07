@@ -1,6 +1,39 @@
 {% extends 'main.jinja2' %}
-{% block title %}<title>Můj Profil</title>{% endblock %}
+{% block title %}<title>Můj účet | Sběrné suroviny</title>{% endblock %}
 {% block content %}
-{{session['user']}}
 
+<h1 style="margin-left:40px; margin-top: 20px; margin-bottom: 20px;">Můj účet</h1>
+
+<div class="side-by-side">
+    <a href="#"><div>
+        <img src="{{ url_for('static',filename='img/pencil.png') }}" alt="Pencil">
+        <h3>ZMĚNA ÚDAJŮ</h3>
+    </div></a>
+
+    <a href="#"><div>
+        <img src="{{ url_for('static',filename='img/recycle-bin.png') }}" alt="Recycle bin">
+        <h3>MOJE SBĚRY</h3>
+    </div></a>
+
+    <a href="#"><div>
+        <img src="{{ url_for('static',filename='img/registration.png') }}" alt="Registration">
+        <h3>ŽÁDOSTI O REGISTRACI</h3>
+    </div></a>
+
+    <a href="#"><div>
+        <img src="{{ url_for('static',filename='img/notes.png') }}" alt="Notes">
+        <h3>ZADÁNÍ SBĚRU</h3>
+    </div></a>
+
+    <a href="#"><div>
+        <img src="{{ url_for('static',filename='img/file.png') }}" alt="File">
+        <h3>ZMĚNA CENÍKU</h3>
+    </div></a>
+
+    <a href="#"><div>
+        <img src="{{ url_for('static',filename='img/management.png') }}" alt="Management">
+        <h3>SPRÁVA UŽIVATELŮ</h3>
+    </div></a>
+
+</div>
 {% endblock %}
