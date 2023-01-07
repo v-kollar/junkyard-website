@@ -146,8 +146,19 @@ def change_your_details():
     
 
 
-@app.route('/zadosti_o_registraci')
+@app.route('/profile/zadosti_o_registraci',methods=['GET','POST'])
 def applications_for_registration():
+    if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2) and request.method == 'POST':
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query = "SELECT id_uzivatele FROM uzivatel WHERE telefon='"+request.form['phone']+"' AND potvrzeni=0"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        if len(result) != 0:
+            return redirect(url_for('application_for_registration', user_id=result[0][0]))
+        else:
+            flash("Pod tímto číslem neexistuje čekající registrace", category="error")
+
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
         return render_template("applications_for_registration.jinja2")
     else:
@@ -157,6 +168,8 @@ def applications_for_registration():
 @app.route('/zadost_o_registraci')
 def application_for_registration():
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
+        user_id = request.args['user_id']
+        print(user_id)
         return render_template("application_for_registration.jinja2")
     else:
         return redirect('/profile/')
@@ -201,20 +214,28 @@ def edit_user():
     if "user" in session and session['user'][0][2] == 1:
         user_id = request.args['user_id']
         if request.method == 'POST':
-            connection = sqlite3.connect('sberna.db')
-            cursor = connection.cursor()
-            query = "SELECT heslo FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
-            cursor.execute(query)
-            result = cursor.fetchall()
-            if (len(request.form['password'])==0):
-                newpassword=result[0][0]
+            if request.form['button'] == "Aktualizovat":
+                connection = sqlite3.connect('sberna.db')
+                cursor = connection.cursor()
+                query = "SELECT heslo FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
+                cursor.execute(query)
+                result = cursor.fetchall()
+                if (len(request.form['password'])==0):
+                    newpassword=result[0][0]
+                else:
+                    newpassword=request.form['password']
+                query="UPDATE uzivatel SET jmeno='"+request.form['first_name']+"', prijmeni='"+request.form['last_name']+"',adresa_trvaleho_bydliste='"+request.form['permanent_stay']+"', adresa_docasneho_bydliste='"+request.form['temp_stay']+"', telefon='"+request.form['phone']+"', cislo_uctu='"+request.form['bank_id']+"',heslo='"+newpassword+"' WHERE id_uzivatele='"+user_id+"'"
+                connection.execute(query)
+                connection.commit()
+                flash("Údaje byly aktualizovány", category="success")
+                return redirect(url_for('user_management'))
             else:
-                newpassword=request.form['password']
-            query="UPDATE uzivatel SET jmeno='"+request.form['first_name']+"', prijmeni='"+request.form['last_name']+"',adresa_trvaleho_bydliste='"+request.form['permanent_stay']+"', adresa_docasneho_bydliste='"+request.form['temp_stay']+"', telefon='"+request.form['phone']+"', cislo_uctu='"+request.form['bank_id']+"',heslo='"+newpassword+"' WHERE id_uzivatele='"+user_id+"'"
-            connection.execute(query)
-            connection.commit()
-            flash("Údaje byly aktualizovány", category="success")
-            return redirect(url_for('user_management'))
+                connection = sqlite3.connect('sberna.db')
+                query="DELETE FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
+                connection.execute(query)
+                connection.commit()
+                flash("Uživatel byl odstraněn", category="success")
+                return redirect(url_for('user_management'))
 
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
