@@ -58,14 +58,14 @@ def login():
     if request.method == 'POST':
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
-        query = "SELECT jmeno,prijmeni,email,heslo,potvrzeni FROM uzivatel WHERE email= '"+request.form['email']+"' AND heslo= '"+request.form['password']+"'"
+        query = "SELECT potvrzeni,id_uzivatele,jmeno,prijmeni,email,telefon,adresa_trvaleho_bydliste,adresa_docasneho_bydliste,cislo_uctu,id_role  FROM uzivatel WHERE email= '"+request.form['email']+"' AND heslo= '"+request.form['password']+"'"
         cursor.execute(query)
         results = cursor.fetchall()
         if len(results) == 0:
             connection.close()
             flash("Zadali jste špatné přihlašovací údaje", category="error")
             return render_template("login.jinja2")
-        elif results[0][4] == 0:
+        elif results[0][0] == 0:
             flash("Váš účet nebyl potvrzen", category="error")
             return render_template("login.jinja2")
         else:
@@ -117,9 +117,13 @@ def reg():
 
     return render_template("reg.jinja2")
 
-@app.route('/zmena_svych_udaju')
+@app.route('/profile/zmena_svych_udaju')
 def change_your_details():
-    return render_template("change_your_details.jinja2")
+    if "user" in session:
+        return render_template("change_your_details.jinja2")
+    else:
+        return redirect('/profile/')
+    
 
 
 @app.route('/zadosti_o_registraci')
@@ -145,9 +149,13 @@ def add_material():
 def collection_details():
     return render_template("details.jinja2")
 
-@app.route('/sprava')
+@app.route('/profile/sprava')
 def user_management():
-    return render_template('management.jinja2')
+    if "user" in session and session['user'][0][9] == 1:
+        return render_template('management.jinja2')
+    else:
+        return redirect('/profile/')
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
