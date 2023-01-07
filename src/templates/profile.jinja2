@@ -5,7 +5,7 @@
 <h1 style="margin-left:40px; margin-top: 20px; margin-bottom: 20px;">Můj účet</h1>
 
 <div class="side-by-side">
-    <a href="#"><div>
+    <a href="{{ url_for('change_your_details') }}"><div>
         <img src="{{ url_for('static',filename='img/pencil.png') }}" alt="Pencil">
         <h3>ZMĚNA ÚDAJŮ</h3>
     </div></a>
@@ -15,7 +15,7 @@
         <h3>MOJE SBĚRY</h3>
     </div></a>
 
-    <a href="#"><div>
+    <a href="{{ url_for('applications_for_registration') }}"><div>
         <img src="{{ url_for('static',filename='img/registration.png') }}" alt="Registration">
         <h3>ŽÁDOSTI O REGISTRACI</h3>
     </div></a>
@@ -30,7 +30,7 @@
         <h3>ZMĚNA CENÍKU</h3>
     </div></a>
 
-    <a href="#"><div>
+    <a href="{{ url_for('user_management') }}"><div>
         <img src="{{ url_for('static',filename='img/management.png') }}" alt="Management">
         <h3>SPRÁVA UŽIVATELŮ</h3>
     </div></a>
