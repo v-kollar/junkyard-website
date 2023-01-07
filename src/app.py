@@ -129,7 +129,13 @@ def edit_user():
 def add_material():
     return render_template("add_material.jinja2")
 
+@app.route('/detaily-sberu')
+def collection_details():
+    return render_template("details.jinja2")
 
+@app.route('/sprava')
+def user_management():
+    return render_template('management.jinja2')
 
 if __name__ == '__main__':
     app.run(debug=True)
