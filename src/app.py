@@ -20,7 +20,19 @@ def home():
 
 @app.route('/statistiky')
 def stats():
-    return render_template("stats.jinja2")
+    connection = sqlite3.connect('sberna.db')
+    cursor = connection.cursor()
+    query = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY typy_materialu.id_typu_materialu"
+    cursor.execute(query)
+    material_total=cursor.fetchall()
+    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) AS mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY strftime('%Y',cas_odevzdani)"
+    cursor.execute(query)
+    yearly_material_total=cursor.fetchall()
+    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena) AS cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) GROUP BY strftime('%Y',cas_odevzdani)"
+    cursor.execute(query)
+    income_total=cursor.fetchall()
+    connection.close()
+    return render_template("stats.jinja2",material_total=material_total, yearly_material_total=yearly_material_total, income_total=income_total)
 
 
 @app.route('/cenik',methods=['GET','POST'])

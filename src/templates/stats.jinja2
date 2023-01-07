@@ -10,13 +10,15 @@ Statistiky
 <div class="row">
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Název</h2>
-	<p>Lorem ipsum</p>
-	<p>Bob</p>
+    {% for i in material_total %}
+	<p>{{i[0]}}</p>
+	{%endfor%}
 </div>
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Hmotnost</h2>
-	<p>Lorem Ipsum</p>
-	<p>Škrob</p>
+    {% for i in material_total %}
+	<p>{{i[1]}}</p>
+	{%endfor%}
 </div>
 </div>
 
@@ -24,13 +26,15 @@ Statistiky
 <div class="row">
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Rok</h2>
-	<p>Lorem ipsum</p>
-	<p>Bob</p>
+    {% for i in yearly_material_total %}
+	<p>{{i[0]}}</p>
+	{%endfor%}
 </div>
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Hmotnost</h2>
-	<p>Lorem Ipsum</p>
-	<p>Škrob</p>
+    {% for i in yearly_material_total %}
+	<p>{{i[1]}}</p>
+	{%endfor%}
 </div>
 </div>
 
@@ -38,13 +42,15 @@ Statistiky
 <div class="row">
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Rok</h2>
-	<p>Lorem ipsum</p>
-	<p>Bob</p>
+    {% for i in income_total %}
+	<p>{{i[0]}}</p>
+	{%endfor%}
 </div>
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Výdělek</h2>
-	<p>Lorem Ipsum</p>
-	<p>Škrob</p>
+    {% for i in income_total %}
+	<p>{{i[1]}}</p>
+	{%endfor%}
 </div>
 </div>
 
