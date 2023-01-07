@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, flash
+from flask import Flask, render_template, request, session, redirect, flash, template_rendered
 import sqlite3
 app = Flask(__name__)
 app.secret_key = "klic"
@@ -181,6 +181,14 @@ def user_management():
         return redirect('/profile/')
     
 
+
+@app.route('/moje-sbery')
+def my_collections():
+    return render_template('my_collections.jinja2')
+
+@app.route('/zadani-sberu')
+def insert_collection():
+    return render_template('add_collections.jinja2')
 
 if __name__ == '__main__':
     app.run(debug=True)
