@@ -1,3 +1,5 @@
+/* Obecne */
+
 * {
   margin: 0;
   padding: 0;
@@ -52,6 +54,8 @@ section p {
 span p {
   padding-top: 25px;
 }
+
+/* Formulare */
 
 .container {
   display: block;
@@ -108,6 +112,7 @@ span p {
   border-radius: 4px;
 }
 
+/* Navigace */
 nav {
   position:sticky;
 	top:0;
@@ -175,6 +180,7 @@ ul {
   left: 0;
 }
 
+/* Paticka */
 footer {
   text-align: center;
   background-color: gray;
@@ -183,6 +189,7 @@ footer {
     
 }
 
+/* DOPLNIT */
 .block button {
   padding: 20px 60px 20px 60px;
   margin-left: 30px;
@@ -377,6 +384,7 @@ h2.stats {
   border-color: rgba(0, 0, 0, 0.19);
 }
 
+/* Muj ucet flex */
 
 .side-by-side {
   display: flex;
@@ -385,7 +393,6 @@ h2.stats {
   margin-bottom: 1em;
   margin-left: 2em;
 }
-
 
 .side-by-side a {
   text-decoration: none;
@@ -423,6 +430,7 @@ h2.stats {
   text-align: center;
   text-transform: uppercase;
 }
+
 
 @media only screen and (min-width: 1080px) {
 section {
