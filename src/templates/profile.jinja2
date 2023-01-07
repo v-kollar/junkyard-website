@@ -10,20 +10,21 @@
         <h3>ZMĚNA ÚDAJŮ</h3>
     </div></a>
 
-    <a href="#"><div>
+    <a href="{{ url_for('my_collections') }}"><div>
         <img src="{{ url_for('static',filename='img/recycle-bin.png') }}" alt="Recycle bin">
         <h3>MOJE SBĚRY</h3>
     </div></a>
-
+{%if session['user'][0][2] == 2 or session['user'][0][2] == 1%}
     <a href="{{ url_for('applications_for_registration') }}"><div>
         <img src="{{ url_for('static',filename='img/registration.png') }}" alt="Registration">
         <h3>ŽÁDOSTI O REGISTRACI</h3>
     </div></a>
 
-    <a href="#"><div>
+    <a href="{{ url_for('insert_collection') }}"><div>
         <img src="{{ url_for('static',filename='img/notes.png') }}" alt="Notes">
         <h3>ZADÁNÍ SBĚRU</h3>
     </div></a>
+{%if session['user'][0][2] == 1%}
 
     <a href="#"><div>
         <img src="{{ url_for('static',filename='img/file.png') }}" alt="File">
@@ -34,6 +35,7 @@
         <img src="{{ url_for('static',filename='img/management.png') }}" alt="Management">
         <h3>SPRÁVA UŽIVATELŮ</h3>
     </div></a>
-
+{% endif%}
+{% endif%}
 </div>
 {% endblock %}

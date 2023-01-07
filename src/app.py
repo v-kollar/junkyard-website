@@ -148,26 +148,44 @@ def change_your_details():
 
 @app.route('/zadosti_o_registraci')
 def applications_for_registration():
-    return render_template("applications_for_registration.jinja2")
+    if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
+        return render_template("applications_for_registration.jinja2")
+    else:
+        return redirect('/profile/')
+    
 
 @app.route('/zadost_o_registraci')
 def application_for_registration():
-    return render_template("application_for_registration.jinja2")
-
+    if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
+        return render_template("application_for_registration.jinja2")
+    else:
+        return redirect('/profile/')
 
 @app.route('/pridani_uzivatele')
 def create_user():
-    return render_template("create_user.jinja2")
+    if "user" in session and session['user'][0][2] == 1:
+        return render_template("create_user.jinja2")
+    else:
+        return redirect('/profile/')
+    
 
 
 @app.route('/uprava_uzivatele')
 def edit_user():
-    return render_template("edit_user.jinja2")
+    if "user" in session and session['user'][0][2] == 1:
+        return render_template("edit_user.jinja2")
+    else:
+        return redirect('/profile/')
+    
 
 
 @app.route('/pridani_materialu')
 def add_material():
-    return render_template("add_material.jinja2")
+    if "user" in session and session['user'][0][2] == 1:
+        return render_template("add_material.jinja2")
+    else:
+        return redirect('/profile/')
+    
 
 @app.route('/detaily-sberu')
 def collection_details():
@@ -182,13 +200,20 @@ def user_management():
     
 
 
-@app.route('/moje-sbery')
+@app.route('/profile/moje-sbery')
 def my_collections():
-    return render_template('my_collections.jinja2')
+    if "user" in session:
+        return render_template('my_collections.jinja2')
+    else:
+        return redirect('/profile/')
 
-@app.route('/zadani-sberu')
+@app.route('/profile/zadani-sberu')
+
 def insert_collection():
-    return render_template('add_collections.jinja2')
+    if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
+        return render_template('add_collections.jinja2')
+    else:
+        return redirect('/profile/')
 
 if __name__ == '__main__':
     app.run(debug=True)
