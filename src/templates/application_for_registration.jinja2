@@ -3,48 +3,48 @@
 {% block content %}
 <div class="reg_container">
     
-    <form action="">
+    <form method="POST">
         <h1>Žádost o registraci</h1>
         
         <div class="form-group">
             <label for="">Jméno</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" name="first_name" value="{{first_name}}"class="form-control" required maxlength="32">
         </div>
 
         <div class="form-group">
             <label for="">Příjmení</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" name="last_name" value="{{last_name}}" class="form-control" required maxlength="32">
         </div>
     
         <div class="form-group">
             <label for="">Adresa trvalého bydliště</label>
-            <input type="text" class="form-control" required maxlength="50">
+            <input type="text" name="permanent_stay" value="{{permanent_stay}}" class="form-control" required maxlength="50">
         </div>
 
         <div class="form-group">
             <label for="">Adresa dočasného bydliště</label>
-            <input type="text" class="form-control" maxlength="50">
+            <input type="text" name="temp_stay" value="{{temp_stay}}" class="form-control" maxlength="50">
         </div>
 
         <div class="form-group">
             <label for="">E-mail</label>
-            <input type="email" class="form-control" required maxlength="50">
+            <input type="email" name="email" value="{{email}}" class="form-control" required maxlength="50">
         </div>
 
         <div class="form-group">
             <label for="">Telefon</label>
-            <input type="tel" class="form-control" required maxlength="9">
+            <input type="tel" name="phone" value="{{phone}}" class="form-control" required maxlength="9">
         </div>
 
 
         <div class="form-group">
             <label for="">Bankovní spojení</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" name="bank_id" value="{{bank_id}}" class="form-control" required maxlength="32">
         </div>
 
 
-        <input type="submit" class="btn" value="Potvrdit">
-        <input type="submit" class="btn" value="Zamítnout">
+        <input type="submit" name="button" class="btn" value="Potvrdit">
+        <input type="submit" name="button" class="btn" value="Zamítnout">
     </form>
 </div>
 {% endblock %}
