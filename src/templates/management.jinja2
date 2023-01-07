@@ -7,18 +7,19 @@ Správa uživatelů
 </h1>
 
 <div class="search-user">
+<form method="POST">
   <label>ID</label>
-	<input type="text">
+	<input name="user_id" type="text">
 	
 	<p>nebo</p>
 	<span></span>
 	
 	<label>Telefon</label>
-  <input type="text">
+  <input name="phone" type="text">
 </div>
 
-<button class="search-user__btn" role="button">Hledat</button>
-
-<button class="search-user__add-btn" role="button">Přidat uživatele</button>
+<input type="submit" class="search-user__btn" value="Hledat">
+</form>
+<button class="search-user__add-btn" type="button" onclick="location.href='{{ url_for('create_user') }}'">Přidat uživatele</button>
 
 {% endblock %}
