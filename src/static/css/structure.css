@@ -237,6 +237,35 @@ table, td, th {
   border: 1px solid;
 }
 
+h2.stats {
+	margin-left: 40px;
+	margin-bottom: 10px;
+}
+
+.row {
+	margin-left: 40px;
+	margin-right: 40px;
+	margin-bottom: 20px;
+}
+
+.col {
+	text-align: center;
+	float: left;
+	width: 50%;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+.row:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.col > p {
+	margin-top: 10px;
+}
+
 @media only screen and (min-width: 1080px) {
 section {
   width: 80%;
@@ -302,5 +331,4 @@ section {
     width: 496px;
     display: inline-block;
   }
-
 }
