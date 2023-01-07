@@ -284,6 +284,100 @@ h2.stats {
 	box-sizing: border-box;
 }
 
+/* Správa uživatelů */
+
+.search-user {
+	font-size: 24px;
+  display: grid;
+	grid-template-columns: max-content max-content;
+	gap: 5px;
+	margin-left: 40px;
+}
+
+.search-user label {
+	text-align: right;
+}
+
+.search-user label:after {
+	content: ":";
+}
+
+.search-user p {
+	color: gray;
+	text-align: right;
+}
+
+.search-user__btn {
+  align-items: center;
+  background-color: rgba(240, 240, 240, 0.26);
+  border: 1px solid #DFDFDF;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  font-size: 22px;
+  justify-content: center;
+  line-height: 35px;
+  width: 10%;
+  text-decoration: none;
+  transition: all .2s;
+  user-select: none;
+  touch-action: manipulation;
+  width: 325px;
+	margin-left: 40px;
+	margin-right: 40px;
+	margin-top: 30px;
+	margin-bottom: 35px;
+}
+
+.search-user__btn:active,
+.button-46:hover {
+  outline: 0;
+}
+
+.search-user__btn:hover {
+  background-color: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.19);
+}
+
+
+.search-user__add-btn {
+  align-items: center;
+  background-color: #C9F9B2;
+  border: 1px solid #DFDFDF;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  font-size: 22px;
+  justify-content: center;
+  line-height: 35px;
+  width: 10%;
+  text-decoration: none;
+  transition: all .2s;
+  user-select: none;
+  touch-action: manipulation;
+  width: 325px;
+	margin-left: 40px;
+	margin-right: 40px;
+	margin-top: 30px;
+	margin-bottom: 35px;
+}
+
+.search-user__add-btn:active,
+.button-46:hover {
+  outline: 0;
+}
+
+.search-user__add-btn:hover {
+  background-color: #7DBD5F;
+	color: white;
+  border-color: rgba(0, 0, 0, 0.19);
+}
+
+
 /* */
 
 @media only screen and (min-width: 1080px) {
@@ -345,7 +439,6 @@ section {
     top: auto;
     z-index: auto;
   }
-
 
   .form-group {
     width: 496px;

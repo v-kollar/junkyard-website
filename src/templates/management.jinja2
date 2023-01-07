@@ -1,0 +1,24 @@
+{% extends 'main.jinja2' %}
+{% block title %}<title>Správa uživatelů</title>{% endblock %}
+{% block content %}
+
+<h1 style="margin-left:40px;margin-top: 20px;margin-bottom: 20px;">
+Správa uživatelů
+</h1>
+
+<div class="search-user">
+  <label>ID</label>
+	<input type="text">
+	
+	<p>nebo</p>
+	<span></span>
+	
+	<label>Telefon</label>
+  <input type="text">
+</div>
+
+<button class="search-user__btn" role="button">Hledat</button>
+
+<button class="search-user__add-btn" role="button">Přidat uživatele</button>
+
+{% endblock %}
