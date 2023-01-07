@@ -111,6 +111,10 @@ def change_your_details():
 
 
 @app.route('/zadosti_o_registraci')
+def applications_for_registration():
+    return render_template("applications_for_registration.jinja2")
+
+@app.route('/zadost_o_registraci')
 def application_for_registration():
     return render_template("application_for_registration.jinja2")
 
@@ -136,6 +140,7 @@ def collection_details():
 @app.route('/sprava')
 def user_management():
     return render_template('management.jinja2')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
