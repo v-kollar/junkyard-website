@@ -377,6 +377,43 @@ h2.stats {
   border-color: rgba(0, 0, 0, 0.19);
 }
 
+/* Moje sběry */
+
+.collection__dates {
+	font-size: 24px;
+  display: grid;
+	grid-template-columns: max-content max-content;
+	gap: 5px;
+	margin-left: 40px;
+}
+
+.collection__dates input {
+	margin-bottom: 15px;
+	font-size: 22px;
+}
+
+.search__my-collections {
+  align-items: center;
+  background-color: rgba(240, 240, 240, 0.26);
+  border: 1px solid #DFDFDF;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  font-size: 22px;
+  justify-content: center;
+  line-height: 35px;
+  width: 10%;
+  text-decoration: none;
+  transition: all .2s;
+  user-select: none;
+  touch-action: manipulation;
+  width: 325px;
+	margin-left: 40px;
+	margin-right: 40px;
+	margin-bottom: 35px;
+}
 
 /* */
 
