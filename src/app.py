@@ -111,8 +111,12 @@ def change_your_details():
 
 
 @app.route('/zadosti_o_registraci')
-def application_for_registration():
+def applications_for_registration():
     return render_template("applications_for_registration.jinja2")
+
+@app.route('/zadost_o_registraci')
+def application_for_registration():
+    return render_template("application_for_registration.jinja2")
 
 
 @app.route('/pridani_uzivatele')
