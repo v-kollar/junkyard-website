@@ -9,7 +9,7 @@
 Ceník
 </h1>
 
-<form class="pricelist__search">
+<form method="POST" class="pricelist__search">
 <label>
 Vyhledávání:
 </label>
@@ -25,15 +25,12 @@ Vyhledávání:
     <th style="width:65%;padding-top:20px;padding-bottom:30px;font-size:30px;">Název</th>
 		<th style="padding-top:20px;padding-bottom:30px;font-size:30px;">Cena/Kg</th>
 	 </tr>
-
+   {% for i in materials %}
    <tr>
-    <td>Cell A1</td>
-    <td>Cell B1</td>
+    <td>{{i[0]}}</td>
+    <td>{{i[1]}}</td>
    </tr>
-   <tr>
-    <td>Cell A2</td>
-    <td>Cell B2</td>
-   </tr>
+   {%endfor%}
   </table>
 
 <div>

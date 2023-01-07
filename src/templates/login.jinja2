@@ -1,6 +1,13 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Přihlášení</title>{% endblock %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=false) %}
+{% if messages %}
+    {% for message in messages %}
+    <section><h2>{{ message }}</h2></section>
+    {% endfor %}
+{% endif %}    
+{% endwith %}
 <div class="container">
     <form method="POST">
         <h1>Přihlášení</h1>
