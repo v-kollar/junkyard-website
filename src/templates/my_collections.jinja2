@@ -19,13 +19,15 @@ Moje sběry
 <div class="row">
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Datum</h2>
-	<p>X.Y.ZZZZ</p>
-	<p>Y.X.ZZZZ</p>
+    {% for i in collections %}
+	<p>{{i[0]}}{{" Kč"}}</p>
+	{%endfor%}
 </div>
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Částka</h2>
-	<p>15.0</p>
-	<p>7.0</p>
+    {% for i in collections %}
+	<p>{{i[1]}}{{" Kč"}}</p>
+	{%endfor%}
 </div>
 </div>
 
