@@ -109,8 +109,11 @@ span p {
 }
 
 nav {
-  position:sticky;top:0;z-index:10;
+  position:sticky;
+	top:0;
+	z-index:10;
 }
+
 nav ul li a{ 
   text-decoration: none;
   font-size: 17px;
@@ -237,6 +240,9 @@ table, td, th {
   border: 1px solid;
 }
 
+
+/* Statistiky */
+
 h2.stats {
 	margin-left: 40px;
 	margin-bottom: 10px;
@@ -262,9 +268,23 @@ h2.stats {
 	clear: both;
 }
 
-.col > p {
+.col > p, .cols > p {
 	margin-top: 10px;
 }
+
+
+/* Detaily sberu */
+
+.cols {
+	background-color:#B1CDA3;
+	text-align: center;
+	float: left;
+	width: 33%;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+/* */
 
 @media only screen and (min-width: 1080px) {
 section {
