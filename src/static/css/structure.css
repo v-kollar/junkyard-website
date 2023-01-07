@@ -433,9 +433,19 @@ h2.stats {
 	font-size: 22px;
 }
 
+.collection__modification select {
+	font-size: 22px;
+	width: 100%;
+}
+
+.collection__modification input {
+	display: grid;
+	width: 50%
+}
+
 .collection__modification input,
 .collection__modification label {
-  display: grid;
+  display: block;
 }
 
 .collection__modification input {
@@ -520,6 +530,11 @@ h2.stats {
   border-color: rgba(0, 0, 0, 0.19);
 }
 
+.closer {
+	margin-left: -10%;
+}
+
+
 /* Muj ucet flex */
 
 .side-by-side {
@@ -550,6 +565,15 @@ h2.stats {
   .side-by-side a {
       width: 100%;
   }
+
+  .wrapper label {
+	  margin-left: auto;
+		margin-top: 10px;
+	}
+
+	.closer {
+		margin-left: 0px;
+	}
 }
 
 .side-by-side h3 {
