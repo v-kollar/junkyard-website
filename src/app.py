@@ -165,12 +165,27 @@ def applications_for_registration():
         return redirect('/profile/')
     
 
-@app.route('/zadost_o_registraci')
+@app.route('/profile/zadosti_o_registraci/zadost_o_registraci',methods=['GET','POST'])
 def application_for_registration():
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
+        connection = sqlite3.connect('sberna.db')
         user_id = request.args['user_id']
-        print(user_id)
-        return render_template("application_for_registration.jinja2")
+        if request.method == 'POST':
+            if request.form['button'] == "Potvrdit":
+                value="1"
+                flash("Registrace byla potvrzena", category="success")
+            else:
+                flash("Registrace byla zamítnuta", category="success")
+                value="2"
+            query="UPDATE uzivatel SET potvrzeni='"+value+"', jmeno='"+request.form['first_name']+"', prijmeni='"+request.form['last_name']+"',adresa_trvaleho_bydliste='"+request.form['permanent_stay']+"', adresa_docasneho_bydliste='"+request.form['temp_stay']+"', telefon='"+request.form['phone']+"', cislo_uctu='"+request.form['bank_id']+"' WHERE id_uzivatele='"+user_id+"'"
+            connection.execute(query)
+            connection.commit()
+            return redirect(url_for('applications_for_registration')) 
+        cursor = connection.cursor()
+        query = "SELECT jmeno,prijmeni,adresa_trvaleho_bydliste, adresa_docasneho_bydliste, email, telefon, cislo_uctu, heslo FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return render_template("application_for_registration.jinja2",first_name=result[0][0],last_name=result[0][1],permanent_stay=result[0][2],temp_stay=result[0][3],email=result[0][4],phone=result[0][5],bank_id=result[0][6])
     else:
         return redirect('/profile/')
 
