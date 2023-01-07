@@ -331,8 +331,7 @@ h2.stats {
 	margin-bottom: 35px;
 }
 
-.search-user__btn:active,
-.button-46:hover {
+.search-user__btn:active, .button-46:hover {
   outline: 0;
 }
 
@@ -415,7 +414,105 @@ h2.stats {
 	margin-bottom: 35px;
 }
 
-/* */
+/* Zadání sběru */
+
+.collection__modification div {
+	font-size: 22px;
+	float: left;
+	margin-right: 20px;
+}
+
+.collection__modification input {
+	font-size: 22px;
+}
+
+.collection__modification input,
+.collection__modification label {
+  display: grid;
+}
+
+.collection__modification input {
+	padding-left: 10px;
+}
+
+.collection__modification .wrapper {
+	margin-left: 40px;
+}
+
+.circle__add {
+	background-color: #B1CDA3;
+	cursor: pointer;
+	user-select: none;
+  width: 40px; 
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+	margin-top: 20px;
+	margin-left: 10px;
+}
+
+.circle__add:hover {
+	background-color: green;
+	color: white;
+}
+
+.circle__remove {
+	background-color: #FF6C6C;
+	cursor: pointer;
+	user-select: none;
+  width: 40px; 
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+	margin-top: 20px;
+	margin-left: 10px;
+}
+
+.circle__remove:hover {
+	background-color: red;
+	color: white;
+}
+
+.bottom {
+	position: fixed;
+  bottom: 0px;
+	margin-left: 40px;
+	margin-bottom: 15%;
+} 
+
+.total-value {
+  display: inline-block;
+	user-select: none;
+  height: 50px;
+  background: lightgray; 
+  padding-left: 20px;
+  padding-right: 20px;
+  line-height: 50px;
+	margin-top: 10px;
+	margin-right: 20px;
+}
+
+
+.btn__insert-collection {
+  font-size: 25px;
+	background-color: #C9F9B2;
+	border: none;
+	cursor: pointer;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn__insert-collection:hover {
+	background-color: #7DBD5F;
+	color: white;
+  border-color: rgba(0, 0, 0, 0.19);
+}
+
 
 @media only screen and (min-width: 1080px) {
 section {
