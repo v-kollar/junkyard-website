@@ -265,8 +265,37 @@ def edit_user():
     
 
 
-@app.route('/pridani_materialu')
+@app.route('/profile/zmena-ceniku/pridani_materialu',methods=['GET','POST'])
 def add_material():
+    if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query="SELECT nazev FROM typy_materialu"
+        cursor.execute(query)
+        
+        results=cursor.fetchall()
+        set = True
+        for i in results:
+            print(i[0])
+            if request.form['type']==i[0]:
+                set= False
+                break
+        if set:
+            query="INSERT INTO typy_materialu (nazev) VALUES('"+request.form['type']+"');"
+            connection.execute(query)
+            connection.commit()
+            query="SELECT id_typu_materialu FROM typy_materialu WHERE nazev='"+request.form['type']+"'"
+            cursor.execute(query)
+            results=cursor.fetchall()
+            print(results[0][0])
+            query="INSERT INTO ceny (datum_od, datum_do, cena, id_typu_materialu) VALUES(datetime('now'), datetime('now', '+1 year'), '"+str(request.form['price'])+"','"+str(results[0][0])+"');"
+            connection.execute(query)
+            connection.commit()
+            flash("Materiál byl vložen", category="success")
+            return render_template("add_material.jinja2")
+        else:
+            flash("Materiál s tímto názvem již existuje", category="error")
+            return render_template("add_material.jinja2")
     if "user" in session and session['user'][0][2] == 1:
         return render_template("add_material.jinja2")
     else:
@@ -285,7 +314,7 @@ def collection_details():
 
 @app.route('/profile/sprava',methods=['GET','POST'])
 def user_management():
-    if request.method == 'POST':
+    if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
         query = "SELECT id_uzivatele FROM uzivatel WHERE id_uzivatele='"+request.form['user_id']+"' OR telefon='"+request.form['phone']+"'"
@@ -329,9 +358,12 @@ def insert_collection():
     else:
         return redirect('/profile/')
 
-@app.route('/zmena-ceniku')
+@app.route('/profile/zmena-ceniku')
 def change_pricelist():
-    return render_template('pricelist-change.jinja2')
+    if "user" in session and session['user'][0][2] == 1:
+        return render_template('pricelist-change.jinja2')
+    else:
+        return redirect('/profile/')
 
 if __name__ == '__main__':
     app.run(debug=True)
