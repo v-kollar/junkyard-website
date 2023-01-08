@@ -20,7 +20,9 @@ Moje sběry
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Datum</h2>
     {% for i in collections %}
-	<form method="POST"><button>{{i[0]}}{{" Kč"}}</button></form>
+	<form method="POST">
+  <button name="collection" value="{{i[2]}}">{{i[0]}}</button>
+  </form>
 	{%endfor%}
 </div>
 <div class="col" style="background-color:#B1CDA3;">
