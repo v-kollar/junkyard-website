@@ -7,21 +7,22 @@ Moje sběry
 </h1>
 
 <div class="collection__dates">
+<form method="POST">
   <label>Datum od</label>
 	<input type="date" id="date-from" name="date-from">
-	
+	<br>
 	<label>Datum do</label>
   <input type="date" id="date-until" name="date-until">
+  <input name="button" class="search__my-collections" type="submit" class="btn" value="Hledat">
+</from>
 </div>
-
-<button class="search__my-collections" role="button">Hledat</button>
 
 <div class="row">
 <div class="col" style="background-color:#B1CDA3;">
   <h2>Datum</h2>
     {% for i in collections %}
 	<form method="POST">
-  <button name="collection" value="{{i[2]}}">{{i[0]}}</button>
+  <button name="button" value="{{i[2]}}">{{i[0]}}</button>
   </form>
 	{%endfor%}
 </div>
