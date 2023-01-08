@@ -125,4 +125,8 @@ VALUES(datetime('now'), 3)
 INSERT INTO polozka (mnozstvi, puvod, id_typu_materialu, id_sberu, id_ceny)
 VALUES(35, 'kradez', 1, 5, 1)
 
+-----------------------------------------------------
 
+8. VLOŽENÍ CENY
+INSERT INTO ceny (datum_od, datum_do, cena, id_typu_materialu)
+VALUES(datetime('now'), datetime('now', '+1 year'), 25, 5);
