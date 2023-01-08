@@ -1,7 +1,13 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Změna ceníku</title>{% endblock %}
 {% block content %}
-
+{% with messages = get_flashed_messages(with_categories=false) %}
+{% if messages %}
+    {% for message in messages %}
+    <section><h2>{{ message }}</h2></section>
+    {% endfor %}
+{% endif %}    
+{% endwith %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <h1 style="margin-left:40px;margin-top: 20px;margin-bottom: 20px;">
@@ -22,12 +28,24 @@ Název položky:
 
 <div class="col name">
   <h2>Název</h2>
-	<p>Hliník</p>
+    {% for i in catalogue %}
+	 <form method="POST">
+     <button name="button" value="{{i[0]}}">{{i[1]}}</button>
+     </form>
+	{%endfor%}
 	</div>
 
 <div class="col price">
   <h2>Cena/Kg</h2>
-	<p><input type="text"></input></p>
+    {% for i in catalogue %}
+	<p>{{i[3]}}</p>
+	{%endfor%}
+</div>
+<div class="col price">
+  <h2>Platí do</h2>
+    {% for i in catalogue %}
+	<p>{{i[2]}}</p>
+	{%endfor%}
 </div>
 
 </div>
