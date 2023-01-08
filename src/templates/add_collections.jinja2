@@ -9,17 +9,27 @@ Zadání sběru
 <form class="collection__modification"
       name="collection__modification" method="POST">
 <div class="wrapper">
+  <div>
+  <label for="materials">Typ materiálu</label>
+	<select id="materials" name="materials" form="materials">
+	  <option value="not-selected">---</option>
+		<option value="iron">Železo</option>
+    <option value="aluminium">Hliník</option>
+    <option value="stone">Kámen</option>
+    <option value="bronze">Bronz</option>
+  </select>
+	</div>		
 	<div>
     <label for="phone">Telefon sběrače</label>
     <input id="phone" type="tel" placeholder="123-456-789" value="" name="name">
   </div>
 
-  <div>
+  <div class="closer">
     <label for="weight">Hmotnost</label>
     <input id="weight" type="text" placeholder="69" value="" name="email">
   </div>
 
-	<div>
+	<div class="closer">
     <label for="origin">Původ</label>
     <input id="origin" type="text" placeholder="Nigérie" value="" name="email">
 	</div>

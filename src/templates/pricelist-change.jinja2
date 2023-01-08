@@ -1,0 +1,35 @@
+{% extends 'main.jinja2' %}
+{% block title %}<title>Změna ceníku</title>{% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<h1 style="margin-left:40px;margin-top: 20px;margin-bottom: 20px;">
+Změna ceníku
+</h1>
+
+<form method="POST" class="pricelist__search">
+<label>
+Název položky:
+</label>
+<input type="text" name="search">
+<button type="submit"><i class="fa fa-search"></i></button>
+</form>
+
+<button class="pricelist-change-btn" role="button">Přidat materiál</button>
+
+<div class="row">
+
+<div class="col name">
+  <h2>Název</h2>
+	<p>Hliník</p>
+	</div>
+
+<div class="col price">
+  <h2>Cena/Kg</h2>
+	<p><input type="text"></input></p>
+</div>
+
+</div>
+
+{% endblock %}

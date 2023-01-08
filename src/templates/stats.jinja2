@@ -8,13 +8,13 @@ Statistiky
 
 <h2 class="stats">Celkové tuny jednotlivých materiálů</h2>
 <div class="row">
-<div class="col" style="background-color:#B1CDA3;">
+<div class="col">
   <h2>Název</h2>
     {% for i in material_total %}
 	<p>{{i[0]}}</p>
 	{%endfor%}
 </div>
-<div class="col" style="background-color:#B1CDA3;">
+<div class="col">
   <h2>Hmotnost</h2>
     {% for i in material_total %}
 	<p>{{i[1]}}{{" T"}}</p>
@@ -24,13 +24,13 @@ Statistiky
 
 <h2 class="stats">Celkové tuny za jednotlivé roky</h2>
 <div class="row">
-<div class="col" style="background-color:#B1CDA3;">
+<div class="col"> 
   <h2>Rok</h2>
     {% for i in yearly_material_total %}
 	<p>{{i[0]}}</p>
 	{%endfor%}
 </div>
-<div class="col" style="background-color:#B1CDA3;">
+<div class="col">
   <h2>Hmotnost</h2>
     {% for i in yearly_material_total %}
 	<p>{{i[1]}}{{" T"}}</p>
@@ -40,13 +40,13 @@ Statistiky
 
 <h2 class="stats">Celkové výdělky za jednotlivé roky</h2>
 <div class="row">
-<div class="col" style="background-color:#B1CDA3;">
+<div class="col">
   <h2>Rok</h2>
     {% for i in income_total %}
 	<p>{{i[0]}}</p>
 	{%endfor%}
 </div>
-<div class="col" style="background-color:#B1CDA3;">
+<div class="col">
   <h2>Výdělek</h2>
     {% for i in income_total %}
 	<p>{{i[1]}}{{" Kč"}}</p>

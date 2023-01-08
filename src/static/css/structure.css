@@ -213,6 +213,7 @@ form.pricelist__search input[type=text] {
 }
 
 form.pricelist__search label {
+	font-size: 22px;
   margin-left: 40px;
 	margin-bottom: 15px;
 	margin-right: 15px;
@@ -374,8 +375,7 @@ h2.stats {
 	margin-bottom: 35px;
 }
 
-.search-user__add-btn:active,
-.button-46:hover {
+.search-user__add-btn:active {
   outline: 0;
 }
 
@@ -433,9 +433,19 @@ h2.stats {
 	font-size: 22px;
 }
 
+.collection__modification select {
+	font-size: 22px;
+	width: 100%;
+}
+
+.collection__modification input {
+	display: grid;
+	width: 50%
+}
+
 .collection__modification input,
 .collection__modification label {
-  display: grid;
+  display: block;
 }
 
 .collection__modification input {
@@ -520,6 +530,79 @@ h2.stats {
   border-color: rgba(0, 0, 0, 0.19);
 }
 
+.closer {
+	margin-left: -10%;
+}
+
+/* Statistiky a změna ceníku */
+
+.row {
+	width: 50%;
+}
+
+.col {
+	background-color: white;
+}
+
+.col h2 {
+	background-color: #B1CDA3;
+}
+
+.col.price p {
+	margin-top: 7px;
+	width: 99%;
+}
+
+.col p {
+	font-size: 20px;
+	margin-top: 12px;
+	padding-top: 1%;
+}
+
+.col input {
+	width: 100%;
+	height: 100%;
+	font-size: 20px;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	display: table-cell;
+	text-align: center;
+}
+
+.pricelist-change-btn {
+  align-items: center;
+  background-color: #C9F9B2;
+  border: 1px solid #DFDFDF;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  font-size: 22px;
+  justify-content: center;
+  line-height: 35px;
+  width: 10%;
+  text-decoration: none;
+  transition: all .2s;
+  user-select: none;
+  touch-action: manipulation;
+  width: 20%;
+	margin-left: 40px;
+	margin-right: 40px;
+	margin-top: 16px;
+	margin-bottom: 50px;
+}
+
+.pricelist-change-btn:active {
+  outline: 0;
+}
+
+.pricelist-change-btn:hover {
+  background-color: #7DBD5F;
+	color: white;
+  border-color: rgba(0, 0, 0, 0.19);
+}
+
 /* Muj ucet flex */
 
 .side-by-side {
@@ -550,6 +633,15 @@ h2.stats {
   .side-by-side a {
       width: 100%;
   }
+
+  .wrapper label {
+	  margin-left: auto;
+		margin-top: 10px;
+	}
+
+	.closer {
+		margin-left: 0px;
+	}
 }
 
 .side-by-side h3 {

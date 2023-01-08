@@ -325,5 +325,10 @@ def insert_collection():
     else:
         return redirect('/profile/')
 
+@app.route('/zmena-ceniku')
+def change_pricelist():
+    return render_template('pricelist-change.jinja2')
+
 if __name__ == '__main__':
     app.run(debug=True)
+
