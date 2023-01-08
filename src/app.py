@@ -190,5 +190,10 @@ def my_collections():
 def insert_collection():
     return render_template('add_collections.jinja2')
 
+@app.route('/zmena-ceniku')
+def change_pricelist():
+    return render_template('pricelist-change.jinja2')
+
 if __name__ == '__main__':
     app.run(debug=True)
+
