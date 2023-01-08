@@ -273,9 +273,15 @@ def add_material():
         return redirect('/profile/')
     
 
-@app.route('/detaily-sberu')
+@app.route('/profile/moje-sbery/detaily-sberu')
 def collection_details():
-    return render_template("details.jinja2")
+    connection = sqlite3.connect('sberna.db')
+    cursor = connection.cursor()
+    query="SELECT nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
+    cursor.execute(query)
+    results=cursor.fetchall()
+    print(request.args['collection_id'])
+    return render_template("details.jinja2",collection=results)
 
 @app.route('/profile/sprava',methods=['GET','POST'])
 def user_management():
@@ -297,22 +303,20 @@ def user_management():
     
 
 
-@app.route('/profile/moje-sbery')#methods=['GET','POST']
+@app.route('/profile/moje-sbery',methods=['GET','POST'])
 def my_collections():
     #if request.method == 'POST':
     #    print("test")
     if "user" in session:
+        if request.method == 'POST':
+            return redirect(url_for('collection_details', collection_id=request.form['collection']))
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
         query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
         cursor.execute(query)
         collections=cursor.fetchall()
         print(collections)
-        query = "SELECT sbery.id_sberu,nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"'"
-        cursor.execute(query)
-        items=cursor.fetchall()
-        print(items)
-        return render_template('my_collections.jinja2',collections=collections,items=items)
+        return render_template('my_collections.jinja2',collections=collections)
 
     else:
         return redirect('/profile/')
