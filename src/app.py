@@ -286,7 +286,7 @@ def user_management():
         cursor.execute(query)
         results=cursor.fetchall()
         if len(results) != 0:
-            return redirect(url_for('edit_user', user_id=request.form['user_id']))
+            return redirect(url_for('edit_user', user_id=results[0]))
         else:
             flash("Uživatele nelze najít", category="error")
             
@@ -304,10 +304,15 @@ def my_collections():
     if "user" in session:
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
-        query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
+        query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
         cursor.execute(query)
         collections=cursor.fetchall()
-        return render_template('my_collections.jinja2',collections=collections)
+        print(collections)
+        query = "SELECT sbery.id_sberu,nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"'"
+        cursor.execute(query)
+        items=cursor.fetchall()
+        print(items)
+        return render_template('my_collections.jinja2',collections=collections,items=items)
 
     else:
         return redirect('/profile/')
