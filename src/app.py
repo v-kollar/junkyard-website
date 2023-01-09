@@ -323,7 +323,7 @@ def add_material():
 def collection_details():
     connection = sqlite3.connect('sberna.db')
     cursor = connection.cursor()
-    query="SELECT nazev, mnozstvi AS hmostnost, cena*mnozstvi AS castka,cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
+    query="SELECT nazev, mnozstvi AS hmostnost, cena*mnozstvi AS castka,cena,STRFTIME('%Y-%m-%d', cas_odevzdani) FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
     cursor.execute(query)
     results=cursor.fetchall()
     print(request.args['collection_id'])
