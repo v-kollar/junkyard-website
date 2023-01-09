@@ -9,7 +9,7 @@
 {% endif %}    
 {% endwith %}
 
-<h1 style="margin-left:40px;margin-top: 20px;margin-bottom: 20px;">
+<h1 class="headline">
 Správa uživatelů
 </h1>
 
@@ -27,6 +27,9 @@ Správa uživatelů
 
 <input type="submit" class="search-user__btn" value="Hledat">
 </form>
-<button class="search-user__add-btn" type="button" onclick="location.href='{{ url_for('create_user') }}'">Přidat uživatele</button>
+<button class="search-user__add-btn" type="button"
+        onclick="location.href='{{ url_for('create_user') }}'">
+Přidat uživatele
+</button>
 
 {% endblock %}

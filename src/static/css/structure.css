@@ -43,16 +43,25 @@ section p {
   width: 100%;
 }
 
+.dot:nth-child(1) {
+	margin-right: 25px;
+}
+
 .dot {
   height: 70px;
   width: 300px;
   border-radius: 50%;
   display: inline-block;
-  margin-left: 5%;
 }
 
 span p {
   padding-top: 25px;
+}
+
+.headline {
+	margin-left: 40px;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
 /* Formulare */
@@ -185,10 +194,9 @@ ul {
 /* Paticka */
 footer {
   text-align: center;
-  background-color: gray;
+  background-color: lightgray;
   padding: 7px 13px;
-  margin-top: auto;
-    
+  margin-top: auto;   
 }
 
 /* DOPLNIT */
@@ -260,8 +268,12 @@ h2.stats {
 
 .row {
 	margin-left: 40px;
-	margin-right: 40px;
 	margin-bottom: 20px;
+	display: flex;
+}
+
+.col > * {
+	border-bottom: 1px solid gray;
 }
 
 .col {
@@ -283,9 +295,10 @@ h2.stats {
 }
 
 .col > form > button {
-	margin-top: 10px;
-  height: 29px;
-  width: 150px;
+	margin-top: 7px;
+	font-size: 20px;
+  /* width: 150px; */
+	border: 1px solid gray;
   background-color: white;
   cursor: pointer;
 }
@@ -323,7 +336,7 @@ h2.stats {
 
 .search-user p {
 	color: gray;
-	text-align: right;
+	text-align: left;
 }
 
 .search-user__btn {
@@ -402,6 +415,10 @@ h2.stats {
 	margin-left: 40px;
 }
 
+.collection__dates > form > label {
+	margin-right: 12px;
+}
+
 .collection__dates input {
 	margin-bottom: 15px;
 	font-size: 22px;
@@ -425,10 +442,16 @@ h2.stats {
   user-select: none;
   touch-action: manipulation;
   width: 325px;
-	margin-left: 40px;
 	margin-right: 40px;
 	margin-bottom: 35px;
 }
+
+/* Moje sběry */
+
+.price > p {
+	margin-top: 7px;
+}
+
 
 /* Zadání sběru */
 
@@ -559,7 +582,10 @@ h2.stats {
 
 .col.price p {
 	margin-top: 7px;
-	width: 99%;
+}
+
+.col.date p {
+	margin-top: 7px;
 }
 
 .col p {
@@ -600,6 +626,12 @@ h2.stats {
 	margin-right: 40px;
 	margin-top: 16px;
 	margin-bottom: 50px;
+}
+
+.pricelist-change-btn__name {
+	width: 100%;
+  box-sizing: border-box;
+	display: block;
 }
 
 .pricelist-change-btn:active {
@@ -651,6 +683,26 @@ h2.stats {
 	.closer {
 		margin-left: 0px;
 	}
+
+	.pricelist__search input {
+		margin-left: 40px;
+	}
+
+	.pricelist-change-btn {
+		width: 280px;
+		flex-direction: column;
+		align-items: right;
+	}
+
+	.row {
+		font-size: 12px;
+		width: 80%;
+	}
+
+	.col.date > p {
+		font-size: 12px;
+		margin-top: 5px;
+	}
 }
 
 .side-by-side h3 {
@@ -667,8 +719,8 @@ h2.stats {
 .side-by-side a h3 {
   text-align: center;
   text-transform: uppercase;
-
 }
+
 @media only screen and (min-width: 1080px) {
 section {
   width: 80%;
