@@ -10,43 +10,32 @@ Zadání sběru
       name="collection__modification" method="POST">
 <div class="wrapper">
   <div>
-  <label for="materials">Typ materiálu</label>
-	<select id="materials" name="materials" form="materials">
-	  <option value="not-selected">---</option>
-		<option value="iron">Železo</option>
-    <option value="aluminium">Hliník</option>
-    <option value="stone">Kámen</option>
-    <option value="bronze">Bronz</option>
-  </select>
+  {% for i in materials %}
+  <label for="materials">{{i[1]}}</label>
+  {%endfor%}
 	</div>		
 	<div>
     <label for="phone">Telefon sběrače</label>
-    <input id="phone" type="tel" placeholder="123-456-789" value="" name="name">
+    <input id="phone" type="tel" placeholder="123456789" name="phone" required>
   </div>
-
   <div class="closer">
+
     <label for="weight">Hmotnost</label>
-    <input id="weight" type="text" placeholder="69" value="" name="email">
+      {% for i in materials %}
+      <input id="weight" type="text" name="{{i[0]}}">
+      {%endfor%}
   </div>
 
 	<div class="closer">
     <label for="origin">Původ</label>
-    <input id="origin" type="text" placeholder="Nigérie" value="" name="email">
+    {% for i in materials %}
+    <input id="weight" type="text" name="{{i[0]}}">
+    {%endfor%}
 	</div>
+  <input type="submit" class="btn" value="Zadat sběr">
 
-	<div class="circle__add">+</div>
-  <div class="circle__remove">-</div>
 </div>
 </form>
 
-<div class="bottom">
-<h2>Hodnota sběru</h2>
-
-<h2 class="total-value">1 200 Kč</h2>
-
-<button class="btn__insert-collection">
-Zadat sběr
-</button>
-</div>
 
 {% endblock %}
