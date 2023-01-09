@@ -92,14 +92,18 @@ span p {
   margin-bottom: 24px;
 }
 
-.container form .form-control, .reg_container form .form-control{
-  width: 100%;
+.container form .form-control, .reg_container form .form-control, .reg_container form .form-group select {
+  width: 99%;
   height: 40px;
   border-radius: 4px;
   border: 1px solid silver;
 	margin: 10px 0 18px 0;
   padding-left: 3px;
   background-color: white;
+}
+
+.reg_container form .form-group select {
+  width: 100%;
 }
 
 .form-group {
@@ -112,16 +116,6 @@ span p {
   text-align: center;
 }
 
-.container form .btn, .reg_container .btn {
-  margin-left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 34px;
-  outline: none;
-  cursor: pointer;
-  text-transform: uppercase;
-  border-radius: 4px;
-}
 
 /* Navigace */
 nav {
@@ -199,7 +193,7 @@ footer {
   margin-top: auto;   
 }
 
-/* DOPLNIT */
+
 .block button {
   padding: 20px 60px 20px 60px;
   margin-left: 30px;
@@ -424,7 +418,7 @@ h2.stats {
 	font-size: 22px;
 }
 
-.search__my-collections {
+.search__my-collections, .container form .btn, .reg_container .btn {
   align-items: center;
   background-color: rgba(240, 240, 240, 0.26);
   border: 1px solid #DFDFDF;
@@ -444,6 +438,14 @@ h2.stats {
   width: 325px;
 	margin-right: 40px;
 	margin-bottom: 35px;
+}
+
+.container form .btn, .reg_container .btn {
+	background-color: white;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Moje sběry */
