@@ -354,14 +354,17 @@ def my_collections():
     if "user" in session:
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
+        query = "SELECT SUM(cena*mnozstvi) AS vyplatit_za_mesic FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND cas_odevzdani >= DATE('now', 'start of month')"
+        cursor.execute(query)
+        payment=cursor.fetchall()
         if request.method == 'POST':
             if request.form['button']=="Hledat":
                 print(request.form['date-from'])
                 print(request.form['date-until'])
-                query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND STRFTIME('%Y-%m-%d', cas_odevzdani) >= '"+str(request.form['date-from'])+"' AND STRFTIME('%Y-%m-%d', cas_odevzdani) <= '"+str(request.form['date-until'])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
+                query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND STRFTIME('%Y-%m-%d', cas_odevzdani) >= '"+str(request.form['date-from'])+"' AND STRFTIME('%Y-%m-%d', cas_odevzdani) <= '"+str(request.form['date-until'])+"' GROUP BY sbery.id_sberu ORDER BY datum DESC"
                 cursor.execute(query)
                 collections=cursor.fetchall()
-                return render_template('my_collections.jinja2',collections=collections)
+                return render_template('my_collections.jinja2',collections=collections,payment=payment[0][0])
             else:
 
                 return redirect(url_for('collection_details', collection_id=request.form['button']))
@@ -369,9 +372,6 @@ def my_collections():
         query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY sbery.id_sberu ORDER BY datum DESC"
         cursor.execute(query)
         collections=cursor.fetchall()
-        query = "SELECT SUM(cena*mnozstvi) AS vyplatit_za_mesic FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND cas_odevzdani >= DATE('now', 'start of month')"
-        cursor.execute(query)
-        payment=cursor.fetchall()
         return render_template('my_collections.jinja2',collections=collections,payment=payment[0][0])
 
     else:
