@@ -1,5 +1,5 @@
 {% extends 'main.jinja2' %}
-{% block title %}<title>Zadání sběru</title>{% endblock %}
+{% block title %}<title>Zadání sběru | Sběrné suroviny</title>{% endblock %}
 {% block content %}
 {% with messages = get_flashed_messages(with_categories=false) %}
 {% if messages %}
@@ -9,7 +9,7 @@
 {% endif %}    
 {% endwith %}
 
-<h1 style="margin-left:40px;margin-top: 20px;margin-bottom: 20px;">
+<h1 class="headline">
 Zadání sběru
 </h1>
 
