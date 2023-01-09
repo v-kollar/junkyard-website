@@ -43,6 +43,10 @@ section p {
   width: 100%;
 }
 
+.dot:nth-child(1) {
+	margin-right: 25px;
+}
+
 .dot {
   height: 70px;
   width: 300px;
