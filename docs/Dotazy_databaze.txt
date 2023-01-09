@@ -56,11 +56,11 @@ GROUP BY strftime('%Y',cas_odevzdani)
 
 5. HISTORIE SVÉHO SBĚRU (MOJE SBĚRY)
 -- datum, castka
-SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka FROM sbery 
-JOIN polozka ON (sbery.id_sberu = polozka.id_sberu)
-JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
-WHERE id_uzivatele = 2
-GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani)
+SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka, sbery.id_sberu FROM sbery 
+JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) 
+JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) 
+WHERE id_uzivatele = 2 
+GROUP BY sbery.id_sberu 
 ORDER BY datum DESC
 
 -- dotaz vyse v rozmezi data
