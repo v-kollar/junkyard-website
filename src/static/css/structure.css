@@ -55,6 +55,12 @@ span p {
   padding-top: 25px;
 }
 
+.headline {
+	margin-left: 40px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
 /* Formulare */
 
 .container {
