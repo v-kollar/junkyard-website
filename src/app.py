@@ -12,7 +12,7 @@ def home():
     query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM (SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
     cursor.execute(query)
     weight = cursor.fetchall()
-    query = "SELECT SUM(cena) vyplaceni_za_rok FROM (SELECT sbery.id_sberu, SUM(cena) cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
+    query = "SELECT SUM(cena*mnozstvi) castka FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year')"
     cursor.execute(query)
     paid=cursor.fetchall()
     connection.close()
@@ -29,7 +29,7 @@ def stats():
     query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) AS mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY strftime('%Y',cas_odevzdani)"
     cursor.execute(query)
     yearly_material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena) AS cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) GROUP BY strftime('%Y',cas_odevzdani)"
+    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena*mnozstvi) AS cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) GROUP BY strftime('%Y',cas_odevzdani)"
     cursor.execute(query)
     income_total=cursor.fetchall()
     connection.close()
