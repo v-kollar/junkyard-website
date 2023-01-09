@@ -2,52 +2,67 @@
 {% block title %}<title>Úprava uživatele | Sběrné suroviny</title>{% endblock %}
 {% block content %}
 <div class="reg_container">
-    
-    <form action="">
+{% with messages = get_flashed_messages(with_categories=false) %}
+{% if messages %}
+    {% for message in messages %}
+    <section><h2>{{ message }}</h2></section>
+    {% endfor %}
+{% endif %}    
+{% endwith %}    
+    <form method="POST">
         <h1>Úprava uživatele</h1>
         
         <div class="form-group">
             <label for="">Jméno</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" name="first_name" value="{{first_name}}" class="form-control" required maxlength="32">
         </div>
 
         <div class="form-group">
             <label for="">Příjmení</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" name="last_name" value="{{last_name}}" class="form-control" required maxlength="32">
         </div>
     
         <div class="form-group">
             <label for="">Adresa trvalého bydliště</label>
-            <input type="text" class="form-control" required maxlength="50">
+            <input type="text" name="permanent_stay" value="{{permanent_stay}}" class="form-control" required maxlength="50">
         </div>
 
         <div class="form-group">
             <label for="">Adresa dočasného bydliště</label>
-            <input type="text" class="form-control" maxlength="50">
+            <input type="text" name="temp_stay" value="{{temp_stay}}" class="form-control" maxlength="50">
         </div>
 
         <div class="form-group">
             <label for="">E-mail</label>
-            <input type="email" class="form-control" required maxlength="50">
+            <input type="email" name ="email" value="{{email}}" class="form-control" required maxlength="50">
         </div>
 
         <div class="form-group">
             <label for="">Telefon</label>
-            <input type="tel" class="form-control" required maxlength="9">
+            <input type="tel" name="phone" value="{{phone}}" pattern="[0-9]{9}" class="form-control" required maxlength="9">
         </div>
 
         <div class="form-group">
             <label for="">Heslo</label>
-            <input type="password" class="form-control" required maxlength="32">
+            <input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Heslo musí obsahovat alespoň 8 znaků, 1 číslo a 1 velké písmeno" class="form-control" name="password" class="form-control" maxlength="32">
         </div>
 
         <div class="form-group">
             <label for="">Bankovní spojení</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" value="{{bank_id}}" name="bank_id" class="form-control" required maxlength="32">
+        </div>
+                <div class="form-group">
+            <label for="">Role</label>    
+            <select name="role">
+                <option value={{ role_id }}>{{role}}</option>
+                {% for i in roles %}
+                <option value={{ i[1] }}>{{i[0]}}</option>
+                {%endfor%}
+            </select>
         </div>
 
-        <input type="submit" class="btn" value="Aktualizovat">
-        <input type="submit" class="btn" value="Odstranit">
+        <input type="submit" name="button"class="btn" value="Aktualizovat">
+        <input type="submit" name="button" class="btn" value="Odstranit">
     </form>
 </div>
 {% endblock %}

@@ -1,13 +1,20 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Žádosti o registraci | Sběrné suroviny</title>{% endblock %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=false) %}
+{% if messages %}
+    {% for message in messages %}
+    <section><h2>{{ message }}</h2></section>
+    {% endfor %}
+{% endif %}    
+{% endwith %}
 
 <div class="container">
     <form method="POST">
         <h1>Žádosti o registraci</h1>
         <div class="form-group">
             <label for="">Telefon sběrače</label>
-            <input name="email" type="text" class="form-control" required>
+            <input name="phone" type="text" class="form-control" required>
         </div>
         <input type="submit" class="btn" value="Hledat">
     </form>

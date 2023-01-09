@@ -66,7 +66,7 @@ GROUP BY strftime('%Y',cas_odevzdani)
 SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka FROM sbery 
 JOIN polozka ON (sbery.id_sberu = polozka.id_sberu)
 JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
-WHERE id_uzivatele = 2
+WHERE id_uzivatele = 2 AND cas_odevzdani >= STRFTIME('%d.%m.%Y', '12.12.2012') AND cas_odevzdani <= ('%d.%m.%Y', '06.06.2023')
 GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani)
 ORDER BY datum DESC
 
@@ -125,4 +125,8 @@ VALUES(datetime('now'), 3)
 INSERT INTO polozka (mnozstvi, puvod, id_typu_materialu, id_sberu, id_ceny)
 VALUES(35, 'kradez', 1, 5, 1)
 
+-----------------------------------------------------
 
+8. VLOŽENÍ CENY
+INSERT INTO ceny (datum_od, datum_do, cena, id_typu_materialu)
+VALUES(datetime('now'), datetime('now', '+1 year'), 25, 5);
