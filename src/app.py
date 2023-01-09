@@ -95,6 +95,8 @@ def logout():
 
 @app.route('/registrace', methods=['GET','POST'])
 def reg():
+    if "user" in session:
+        return redirect('/profile/')
     if request.method == 'POST':
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
