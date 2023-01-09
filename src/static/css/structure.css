@@ -40,6 +40,25 @@ section p {
 	border-bottom: 15px;
 }
 
+.flash_message {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	animation: hide_message 0s ease-in 3s;
+	animation-fill-mode: forwards;
+
+}
+
+@keyframes hide_message {
+	to {
+		visibility: hidden;
+		width: 0%;
+		height: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+
+	}
+}
+
 .banner {
   width: 100%;
 }
