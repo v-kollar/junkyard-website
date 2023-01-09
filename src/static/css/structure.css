@@ -23,6 +23,7 @@ section h1 {
   padding: 30px 10px 0;
   line-height: 25px;
 	margin-left: 30px;
+	font-size: 30px;
 }
 
 section h2 {
@@ -118,6 +119,12 @@ span p {
 
 .form-control {
 	font-size: 17px;
+}
+
+input:focus {
+  border-color: #66A449;
+  box-shadow: 1px 1px 3px #66A449 inset, 0 0 10px #66A449;
+  outline: 0 none;
 }
 
 /* Navigace */
@@ -738,7 +745,8 @@ section {
 	}
 
   section h1 {
-    padding: 20px 0 0;
+		font-size: 32px;
+    padding: 27px 0 0;
     line-height: 25px;
 	}
 
@@ -766,7 +774,8 @@ section {
 	}
 
   span p {
-    padding-top: 90px;
+    padding-top: 85px;
+		font-size: 25px;
   }
 
   .checkbtn {
