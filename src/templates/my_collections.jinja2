@@ -13,25 +13,32 @@ Moje sběry
 	<br>
 	<label>Datum do</label>
   <input type="date" id="date-until" name="date-until">
-  <input name="button" class="search__my-collections" type="submit" class="btn" value="Hledat">
-</from>
+	<input name="button" class="search__my-collections"
+	       type="submit" class="btn" value="Hledat">
+</form>
 </div>
 
 <div class="row">
-<div class="col" style="background-color:#B1CDA3;">
+
+<div class="col date">
   <h2>Datum</h2>
-    {% for i in collections %}
+  {% for i in collections %}
 	<form method="POST">
-  <button name="button" value="{{i[2]}}">{{i[0]}}</button>
+	<button class="pricelist-change-btn__name"
+	        name="button" value="{{i[2]}}">
+	  {{i[0]}}
+	  </button>
   </form>
-	{%endfor%}
+	{% endfor %}
 </div>
-<div class="col" style="background-color:#B1CDA3;">
+
+<div class="col price">
   <h2>Částka</h2>
-    {% for i in collections %}
+  {% for i in collections %}
 	<p>{{i[1]}}{{" Kč"}}</p>
-	{%endfor%}
+	{% endfor %}
 </div>
+
 </div>
 
 

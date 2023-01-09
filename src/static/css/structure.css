@@ -328,7 +328,7 @@ h2.stats {
 
 .search-user p {
 	color: gray;
-	text-align: right;
+	text-align: left;
 }
 
 .search-user__btn {
@@ -407,6 +407,10 @@ h2.stats {
 	margin-left: 40px;
 }
 
+.collection__dates > form > label {
+	margin-right: 12px;
+}
+
 .collection__dates input {
 	margin-bottom: 15px;
 	font-size: 22px;
@@ -430,10 +434,16 @@ h2.stats {
   user-select: none;
   touch-action: manipulation;
   width: 325px;
-	margin-left: 40px;
 	margin-right: 40px;
 	margin-bottom: 35px;
 }
+
+/* Moje sběry */
+
+.price > p {
+	margin-top: 7px;
+}
+
 
 /* Zadání sběru */
 
