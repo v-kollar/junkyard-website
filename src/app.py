@@ -366,7 +366,7 @@ def my_collections():
 
                 return redirect(url_for('collection_details', collection_id=request.form['button']))
 
-        query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
+        query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY sbery.id_sberu ORDER BY datum DESC"
         cursor.execute(query)
         collections=cursor.fetchall()
         query = "SELECT SUM(cena*mnozstvi) AS vyplatit_za_mesic FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND cas_odevzdani >= DATE('now', 'start of month')"
@@ -387,9 +387,35 @@ def insert_collection():
             query = "SELECT id_typu_materialu FROM typy_materialu"
             cursor.execute(query)
             results=cursor.fetchall()
+            set = True
             for i in results:
                 material=(request.form.getlist(str(i[0])))
-                print(material[0])
+                if material[0] !="" and material[1] !="":
+                    if set:
+                        query = "SELECT id_uzivatele from uzivatel WHERE telefon = '"+str(request.form['phone'])+"'"
+                        cursor.execute(query)
+                        user=cursor.fetchall()
+                        if len(user) == 0:
+                            flash("Uživatel s tímto telefon neexsituje", category="succcess")
+                            return redirect('/profile/zadani-sberu')
+                        query = "INSERT INTO sbery (cas_odevzdani, id_uzivatele) VALUES(datetime('now'), '"+str(user[0][0])+"')"
+                        connection.execute(query)
+                        connection.commit()
+                        query = "SELECT id_sberu FROM sbery WHERE id_uzivatele='"+str(user[0][0])+"' ORDER BY cas_odevzdani DESC LIMIT 1"
+                        cursor.execute(query)
+                        collection_id=cursor.fetchall()
+                        set = False
+                    cursor = connection.cursor()
+                    query = "SELECT id_ceny FROM typy_materialu JOIN ceny ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND ceny.id_typu_materialu = '"+str(i[0])+"'"
+                    cursor.execute(query)
+                    price=cursor.fetchall()
+                    print("Cena",price[0][0])
+                    query = "INSERT INTO polozka (mnozstvi, puvod, id_typu_materialu, id_sberu, id_ceny) VALUES('"+str(material[0])+"', '"+material[1]+"', '"+str(i[0])+"', '"+str(collection_id[0][0])+"', '"+str(price[0][0])+"')"
+                    connection.execute(query)
+                    connection.commit()
+            if set == False:
+                flash("Sběr byl vložen", category="succcess")
+            return redirect('/profile/zadani-sberu')
         cursor = connection.cursor()
         query = "SELECT id_typu_materialu, nazev FROM typy_materialu"
         cursor.execute(query)
