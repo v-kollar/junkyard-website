@@ -12,11 +12,11 @@ def home():
     query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM (SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
     cursor.execute(query)
     weight = cursor.fetchall()
-    query = "SELECT SUM(cena) vyplaceni_za_rok FROM (SELECT sbery.id_sberu, SUM(cena) cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
+    query = "SELECT SUM(cena*mnozstvi) castka FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year')"
     cursor.execute(query)
     paid=cursor.fetchall()
     connection.close()
-    return render_template("index.jinja2", weight=str(round(weight[0][0]))+" T", paid=str(round(paid[0][0]))+" Kč")
+    return render_template("index.jinja2", weight=str(weight[0][0])+" Kg", paid=str(paid[0][0])+" Kč")
 
 
 @app.route('/statistiky')
@@ -29,7 +29,7 @@ def stats():
     query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) AS mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY strftime('%Y',cas_odevzdani)"
     cursor.execute(query)
     yearly_material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena) AS cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) GROUP BY strftime('%Y',cas_odevzdani)"
+    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena*mnozstvi) AS cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) GROUP BY strftime('%Y',cas_odevzdani)"
     cursor.execute(query)
     income_total=cursor.fetchall()
     connection.close()
@@ -323,7 +323,7 @@ def add_material():
 def collection_details():
     connection = sqlite3.connect('sberna.db')
     cursor = connection.cursor()
-    query="SELECT nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
+    query="SELECT nazev, mnozstvi AS hmostnost, cena*mnozstvi AS castka,cena,STRFTIME('%Y-%m-%d', cas_odevzdani) FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
     cursor.execute(query)
     results=cursor.fetchall()
     print(request.args['collection_id'])
@@ -352,28 +352,49 @@ def user_management():
 @app.route('/profile/moje-sbery',methods=['GET','POST'])
 def my_collections():
     if "user" in session:
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query = "SELECT SUM(cena*mnozstvi) AS vyplatit_za_mesic FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND cas_odevzdani >= DATE('now', 'start of month')"
+        cursor.execute(query)
+        payment=cursor.fetchall()
         if request.method == 'POST':
             if request.form['button']=="Hledat":
                 print(request.form['date-from'])
                 print(request.form['date-until'])
+                query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND STRFTIME('%Y-%m-%d', cas_odevzdani) >= '"+str(request.form['date-from'])+"' AND STRFTIME('%Y-%m-%d', cas_odevzdani) <= '"+str(request.form['date-until'])+"' GROUP BY sbery.id_sberu ORDER BY datum DESC"
+                cursor.execute(query)
+                collections=cursor.fetchall()
+                return render_template('my_collections.jinja2',collections=collections,payment=payment[0][0])
             else:
 
                 return redirect(url_for('collection_details', collection_id=request.form['button']))
-        connection = sqlite3.connect('sberna.db')
-        cursor = connection.cursor()
-        query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
+
+        query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY sbery.id_sberu ORDER BY datum DESC"
         cursor.execute(query)
         collections=cursor.fetchall()
-        return render_template('my_collections.jinja2',collections=collections)
+        return render_template('my_collections.jinja2',collections=collections,payment=payment[0][0])
 
     else:
         return redirect('/profile/')
 
-@app.route('/profile/zadani-sberu')
+@app.route('/profile/zadani-sberu',methods=['GET','POST'])
 
 def insert_collection():
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
-        return render_template('add_collections.jinja2')
+        connection = sqlite3.connect('sberna.db')
+        if request.method == 'POST':
+            cursor = connection.cursor()
+            query = "SELECT id_typu_materialu FROM typy_materialu"
+            cursor.execute(query)
+            results=cursor.fetchall()
+            for i in results:
+                material=(request.form.getlist(str(i[0])))
+                print(material[0])
+        cursor = connection.cursor()
+        query = "SELECT id_typu_materialu, nazev FROM typy_materialu"
+        cursor.execute(query)
+        results=cursor.fetchall()
+        return render_template('add_collections.jinja2',materials=results)
     else:
         return redirect('/profile/')
 

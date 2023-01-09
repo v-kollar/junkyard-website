@@ -1,21 +1,25 @@
 {% block nav %}
-    <nav>
-        <input type="checkbox" id="check">
-        <label for="check" class="checkbtn">
-        &#9776;
-        </label>
-        <label class="logo">Sběrna</label>
-        <ul>
-            <li><a href="{{ url_for('home') }}">DOMOV</a></li>
-            <li><a href="{{ url_for('stats') }}">STATISTIKY</a></li>
-            <li><a href="{{ url_for('pricelist') }}">CENÍK</a></li>
-            {%if "user" in session%}
-            <li><a href="{{ url_for('profile') }}">PROFIL</a></li>
-            <li><a href="{{ url_for('logout') }}">ODHLÁSIT</a></li>
-            {% else %}
-            <li><a href="{{ url_for('login') }}">PŘIHLÁŠENÍ</a></li>
-            <li><a href="{{ url_for('reg') }}">REGISTRACE</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+
+<nav>
+<input type="checkbox" id="check">
+<label for="check" class="checkbtn">
+&#9776;
+</label>
+<label class="logo">Sběrna</label>
+<ul>
+  <li><a href="{{ url_for('home') }}">DOMŮ</a></li>
+  <li><a href="{{ url_for('stats') }}">STATISTIKY</a></li>
+  <li><a href="{{ url_for('pricelist') }}">CENÍK</a></li>
+	
+	{% if "user" in session %}
+  <li><a href="{{ url_for('profile') }}">PROFIL</a></li>
+  <li><a href="{{ url_for('logout') }}">ODHLÁSIT SE</a></li>
+  {% else %}		
+	<li><a href="{{ url_for('login') }}">PŘIHLÁŠENÍ</a></li>
+  <li><a href="{{ url_for('reg') }}">REGISTRACE</a></li>
+	{% endif %}
+
+</ul>
+</nav>
+
 {% endblock %}

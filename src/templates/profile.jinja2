@@ -1,8 +1,15 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Můj účet | Sběrné suroviny</title>{% endblock %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=false) %}
+{% if messages %}
+    {% for message in messages %}
+    <section><h2 class="flash_message">{{ message }}</h2></section>
+    {% endfor %}
+{% endif %}    
+{% endwith %}  
 
-<h1 style="margin-left:40px; margin-top: 20px; margin-bottom: 20px;">Můj účet</h1>
+<h1 class="headline">Můj účet</h1>
 
 <div class="side-by-side">
     <a href="{{ url_for('change_your_details') }}"><div>

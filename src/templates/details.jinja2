@@ -5,7 +5,7 @@
 <h1 class="headline">
 Detaily sběru
 </h1>
-
+<h1>{{collection[0][4]}}</h1>
 <div class="row">
 <div class="cols">
   <h2>Název</h2>
@@ -23,6 +23,12 @@ Detaily sběru
   <h2>Částka</h2>
     {% for i in collection %}
 	<p>{{i[2]}}</p>
+	{%endfor%}
+</div>
+<div class="cols">
+  <h2>Částka za kus</h2>
+    {% for i in collection %}
+	<p>{{i[3]}}</p>
 	{%endfor%}
 </div>
 </div>

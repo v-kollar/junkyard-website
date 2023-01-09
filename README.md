@@ -1,4 +1,6 @@
 # VWA Projekt sběrna
+## Funkční aplikace
+[http://vwa.westeurope.cloudapp.azure.com](http://vwa.westeurope.cloudapp.azure.com)
 ## Specifikace požadavků na aplikaci
 ## Popis uživatelských skupin
 ### Role
