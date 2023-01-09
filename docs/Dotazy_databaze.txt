@@ -1,26 +1,19 @@
 1. DOMOV/KOLIK MATERIALU JSME ZPRACOVALI ZA ROK?
 
-SELECT SUM(mnozstvi) mnozstvi_za_rok 
-FROM (
-    SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi 
-    FROM sbery 
-    JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) 
-    JOIN ceny ON (polozka.id_ceny = ceny.id_ceny)
-    WHERE sbery.cas_odevzdani > datetime('now', '-1 year')
-    GROUP BY sbery.id_sberu)
+SELECT SUM(mnozstvi)
+FROM sbery 
+JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) 
+JOIN ceny ON (polozka.id_ceny = ceny.id_ceny)
+WHERE sbery.cas_odevzdani > datetime('now', '-1 year')
 
 -----------------------------------------------------
 
 2. DOMOV/A KOLIK JSME VAM ZA NEJ ZAPLATILI
 
-SELECT SUM(cena) vyplaceni_za_rok 
-FROM (
-    SELECT sbery.id_sberu, SUM(cena) cena 
-    FROM sbery 
-    JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) 
-    JOIN ceny ON (polozka.id_ceny = ceny.id_ceny)
-    WHERE sbery.cas_odevzdani > datetime('now', '-1 year')
-    GROUP BY sbery.id_sberu)
+SELECT SUM(cena*mnozstvi) castka FROM sbery
+JOIN polozka ON (polozka.id_sberu = sbery.id_sberu)
+JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
+WHERE sbery.cas_odevzdani > datetime('now', '-1 year')
 
 -----------------------------------------------------
 
@@ -53,7 +46,7 @@ GROUP BY strftime('%Y',cas_odevzdani)
 
 C. CELKOVÉ VÝDĚLKY ZA JEDNOTLIVÉ ROKY
 
-SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena) AS cena
+SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena*mnozstvi) AS cena
 FROM sbery 
 JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) 
 JOIN ceny ON (polozka.id_ceny = ceny.id_ceny)
@@ -63,20 +56,38 @@ GROUP BY strftime('%Y',cas_odevzdani)
 
 5. HISTORIE SVÉHO SBĚRU (MOJE SBĚRY)
 -- datum, castka
-SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka FROM sbery 
+SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena*mnozstvi) AS castka FROM sbery 
 JOIN polozka ON (sbery.id_sberu = polozka.id_sberu)
 JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
-WHERE id_uzivatele = 2 AND cas_odevzdani >= STRFTIME('%d.%m.%Y', '12.12.2012') AND cas_odevzdani <= ('%d.%m.%Y', '06.06.2023')
+WHERE id_uzivatele = 2
 GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani)
 ORDER BY datum DESC
 
+-- dotaz vyse v rozmezi data
+SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka FROM sbery 
+JOIN polozka ON (sbery.id_sberu = polozka.id_sberu)
+JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
+WHERE id_uzivatele = 2 AND STRFTIME('%Y-%m-%d', cas_odevzdani) >= '2012-12-25' AND STRFTIME('%Y-%m-%d', cas_odevzdani) <= '2023-01-08'
+GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani)
+ORDER BY datum DESC
+
+-- id nejnovejsiho sberu
+SELECT id_sberu FROM sbery
+ORDER BY cas_odevzdani DESC
+LIMIT 1
+
 -- detail sberu
-SELECT nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery
+SELECT nazev, mnozstvi AS hmostnost, cena*mnozstvi AS castka FROM sbery
 JOIN polozka ON (sbery.id_sberu = polozka.id_sberu)
 JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
 JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu)
 WHERE id_uzivatele = 2 AND STRFTIME('%Y-%m-%d', cas_odevzdani) = '2005-01-10' 
 
+-- jaka castka za aktualni mesic ma byt sberaci vyplacena
+SELECT SUM(cena) AS vyplatit_za_mesic FROM sbery
+JOIN polozka ON (polozka.id_sberu = sbery.id_sberu)
+JOIN ceny ON (ceny.id_ceny = polozka.id_ceny)
+WHERE id_uzivatele = 2 AND cas_odevzdani >= DATE('now', 'start of month')
 
 -----------------------------------------------------
 
@@ -127,6 +138,12 @@ VALUES(35, 'kradez', 1, 5, 1)
 
 -----------------------------------------------------
 
-8. VLOŽENÍ CENY
+8. PRÁCE S CENOU
+A. PŘIDÁNÍ CENY
 INSERT INTO ceny (datum_od, datum_do, cena, id_typu_materialu)
 VALUES(datetime('now'), datetime('now', '+1 year'), 25, 5);
+
+B. UKONČENÍ PLATNOSTI CENY
+UPDATE ceny
+SET datum_do = datetime('now')
+WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND id_typu_materialu = 1
