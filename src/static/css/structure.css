@@ -260,8 +260,12 @@ h2.stats {
 
 .row {
 	margin-left: 40px;
-	margin-right: 40px;
 	margin-bottom: 20px;
+	display: flex;
+}
+
+.col > * {
+	border-bottom: 1px solid gray;
 }
 
 .col {
@@ -283,9 +287,10 @@ h2.stats {
 }
 
 .col > form > button {
-	margin-top: 10px;
-  height: 29px;
-  width: 150px;
+	margin-top: 7px;
+	font-size: 20px;
+  /* width: 150px; */
+	border: 1px solid gray;
   background-color: white;
   cursor: pointer;
 }
@@ -559,7 +564,10 @@ h2.stats {
 
 .col.price p {
 	margin-top: 7px;
-	width: 99%;
+}
+
+.col.date p {
+	margin-top: 7px;
 }
 
 .col p {
@@ -600,6 +608,12 @@ h2.stats {
 	margin-right: 40px;
 	margin-top: 16px;
 	margin-bottom: 50px;
+}
+
+.pricelist-change-btn__name {
+	width: 100%;
+  box-sizing: border-box;
+	display: block;
 }
 
 .pricelist-change-btn:active {
@@ -651,6 +665,26 @@ h2.stats {
 	.closer {
 		margin-left: 0px;
 	}
+
+	.pricelist__search input {
+		margin-left: 40px;
+	}
+
+	.pricelist-change-btn {
+		width: 280px;
+		flex-direction: column;
+		align-items: right;
+	}
+
+	.row {
+		font-size: 12px;
+		width: 80%;
+	}
+
+	.col.date > p {
+		font-size: 12px;
+		margin-top: 5px;
+	}
 }
 
 .side-by-side h3 {
@@ -667,8 +701,8 @@ h2.stats {
 .side-by-side a h3 {
   text-align: center;
   text-transform: uppercase;
-
 }
+
 @media only screen and (min-width: 1080px) {
 section {
   width: 80%;

@@ -28,24 +28,25 @@ Název položky:
 
 <div class="col name">
   <h2>Název</h2>
-    {% for i in catalogue %}
+   {% for i in catalogue %}
 	 <form method="POST">
-     <button name="button" value="{{i[0]}}">{{i[1]}}</button>
+     <button class="pricelist-change-btn__name" name="button" value="{{i[0]}}">{{i[1]}}</button>
      </form>
-	{%endfor%}
-	</div>
+	{% endfor %}
+</div>
 
 <div class="col price">
   <h2>Cena/Kg</h2>
-    {% for i in catalogue %}
+  {% for i in catalogue %}
 	<p>{{i[3]}}</p>
-	{%endfor%}
+	{% endfor %}
 </div>
-<div class="col price">
+
+<div class="col date">
   <h2>Platí do</h2>
-    {% for i in catalogue %}
+  {% for i in catalogue %}
 	<p>{{i[2]}}</p>
-	{%endfor%}
+	{% endfor %}
 </div>
 
 </div>
