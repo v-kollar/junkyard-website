@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, flash, template_rendered, url_for
 import sqlite3
+from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "klic"
 
@@ -94,6 +95,8 @@ def logout():
 
 @app.route('/registrace', methods=['GET','POST'])
 def reg():
+    if "user" in session:
+        return redirect('/profile/')
     if request.method == 'POST':
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
@@ -239,7 +242,7 @@ def edit_user():
                     newpassword=result[0][0]
                 else:
                     newpassword=request.form['password']
-                query="UPDATE uzivatel SET jmeno='"+request.form['first_name']+"', prijmeni='"+request.form['last_name']+"',adresa_trvaleho_bydliste='"+request.form['permanent_stay']+"', adresa_docasneho_bydliste='"+request.form['temp_stay']+"', telefon='"+request.form['phone']+"', cislo_uctu='"+request.form['bank_id']+"',heslo='"+newpassword+"' WHERE id_uzivatele='"+user_id+"'"
+                query="UPDATE uzivatel SET id_role='"+request.form['role']+"', jmeno='"+request.form['first_name']+"', prijmeni='"+request.form['last_name']+"',adresa_trvaleho_bydliste='"+request.form['permanent_stay']+"', adresa_docasneho_bydliste='"+request.form['temp_stay']+"', telefon='"+request.form['phone']+"', cislo_uctu='"+request.form['bank_id']+"',heslo='"+newpassword+"' WHERE id_uzivatele='"+user_id+"'"
                 connection.execute(query)
                 connection.commit()
                 flash("Údaje byly aktualizovány", category="success")
@@ -254,10 +257,20 @@ def edit_user():
 
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
-        query = "SELECT jmeno,prijmeni,adresa_trvaleho_bydliste, adresa_docasneho_bydliste, email, telefon, cislo_uctu, heslo FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
+        query = "SELECT jmeno,prijmeni,adresa_trvaleho_bydliste, adresa_docasneho_bydliste, email, telefon, cislo_uctu, heslo,role.nazev,role.id_role FROM uzivatel JOIN role ON(uzivatel.id_role=role.id_role) WHERE id_uzivatele='"+user_id+"'"
         cursor.execute(query)
-        result = cursor.fetchall()
-        return render_template("edit_user.jinja2",first_name=result[0][0],last_name=result[0][1],permanent_stay=result[0][2],temp_stay=result[0][3],email=result[0][4],phone=result[0][5],bank_id=result[0][6])
+        user = cursor.fetchall()
+        query = "SELECT nazev, id_role FROM role"
+        cursor.execute(query)
+        roles = cursor.fetchall()
+        print(roles)
+        print(user[0][8])
+        for i in range (len(roles)):
+            if(roles[i][0]==str(user[0][8])):
+                roles.pop(i)
+                break
+        print(roles)
+        return render_template("edit_user.jinja2",first_name=user[0][0],last_name=user[0][1],permanent_stay=user[0][2],temp_stay=user[0][3],email=user[0][4],phone=user[0][5],bank_id=user[0][6],role=user[0][8],role_id=user[0][9],roles=roles)
 
         
     else:
@@ -265,21 +278,60 @@ def edit_user():
     
 
 
-@app.route('/pridani_materialu')
+@app.route('/profile/zmena-ceniku/pridani_materialu',methods=['GET','POST'])
 def add_material():
+    if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        query="SELECT nazev FROM typy_materialu"
+        cursor.execute(query)
+        
+        results=cursor.fetchall()
+        set = True
+        for i in results:
+            print(i[0])
+            if request.form['type']==i[0]:
+                set= False
+                break
+        if set:
+            query="INSERT INTO typy_materialu (nazev) VALUES('"+request.form['type']+"');"
+            connection.execute(query)
+            connection.commit()
+            query="SELECT id_typu_materialu FROM typy_materialu WHERE nazev='"+request.form['type']+"'"
+            cursor.execute(query)
+            results=cursor.fetchall()
+            print(results[0][0])
+            now = datetime.utcnow()
+            current_time = now.strftime(" %H:%M:%S")
+            date = str(request.form['date-until']) + current_time
+            print(date)
+            query="INSERT INTO ceny (datum_od, datum_do, cena, id_typu_materialu) VALUES(datetime('now'), '"+date+"', '"+str(request.form['price'])+"', '"+str(results[0][0])+"');"
+            connection.execute(query)
+            connection.commit()
+            flash("Materiál byl vložen", category="success")
+            return render_template("add_material.jinja2")
+        else:
+            flash("Materiál s tímto názvem již existuje", category="error")
+            return render_template("add_material.jinja2")
     if "user" in session and session['user'][0][2] == 1:
         return render_template("add_material.jinja2")
     else:
         return redirect('/profile/')
     
 
-@app.route('/detaily-sberu')
+@app.route('/profile/moje-sbery/detaily-sberu')
 def collection_details():
-    return render_template("details.jinja2")
+    connection = sqlite3.connect('sberna.db')
+    cursor = connection.cursor()
+    query="SELECT nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
+    cursor.execute(query)
+    results=cursor.fetchall()
+    print(request.args['collection_id'])
+    return render_template("details.jinja2",collection=results)
 
 @app.route('/profile/sprava',methods=['GET','POST'])
 def user_management():
-    if request.method == 'POST':
+    if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
         query = "SELECT id_uzivatele FROM uzivatel WHERE id_uzivatele='"+request.form['user_id']+"' OR telefon='"+request.form['phone']+"'"
@@ -297,22 +349,22 @@ def user_management():
     
 
 
-@app.route('/profile/moje-sbery')#methods=['GET','POST']
+@app.route('/profile/moje-sbery',methods=['GET','POST'])
 def my_collections():
-    #if request.method == 'POST':
-    #    print("test")
     if "user" in session:
+        if request.method == 'POST':
+            if request.form['button']=="Hledat":
+                print(request.form['date-from'])
+                print(request.form['date-until'])
+            else:
+
+                return redirect(url_for('collection_details', collection_id=request.form['button']))
         connection = sqlite3.connect('sberna.db')
         cursor = connection.cursor()
         query = "SELECT STRFTIME('%Y-%m-%d', cas_odevzdani) AS datum, SUM(cena) AS castka,sbery.id_sberu FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' GROUP BY STRFTIME('%Y-%m-%d', cas_odevzdani) ORDER BY datum DESC"
         cursor.execute(query)
         collections=cursor.fetchall()
-        print(collections)
-        query = "SELECT sbery.id_sberu,nazev, mnozstvi AS hmostnost, cena AS castka FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"'"
-        cursor.execute(query)
-        items=cursor.fetchall()
-        print(items)
-        return render_template('my_collections.jinja2',collections=collections,items=items)
+        return render_template('my_collections.jinja2',collections=collections)
 
     else:
         return redirect('/profile/')
@@ -325,10 +377,48 @@ def insert_collection():
     else:
         return redirect('/profile/')
 
-@app.route('/zmena-ceniku')
+@app.route('/profile/zmena-ceniku',methods=['GET','POST'])
 def change_pricelist():
-    return render_template('pricelist-change.jinja2')
-
+    if "user" in session and session['user'][0][2] == 1:
+        connection = sqlite3.connect('sberna.db')
+        cursor = connection.cursor()
+        if request.method == 'POST':
+            if request.form['button']== "search":
+                query = "SELECT ceny.id_typu_materialu, nazev,datum_do,cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND typy_materialu.nazev='"+str(request.form['search'])+"'"
+                cursor.execute(query)
+                results=cursor.fetchall()
+                return render_template('pricelist-change.jinja2',catalogue=results)
+            return redirect(url_for('edit_material', material_id=request.form['button']))
+        query = "SELECT ceny.id_typu_materialu, nazev,datum_do,cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now')"
+        cursor.execute(query)
+        results=cursor.fetchall()
+        return render_template('pricelist-change.jinja2',catalogue=results)
+    else:
+        return redirect('/profile/')
+@app.route('/profile/zmena-ceniku/uprava-polozky',methods=['GET','POST'])
+def edit_material():
+    if "user" in session and session['user'][0][2] == 1:
+        connection = sqlite3.connect('sberna.db')
+        if request.method == 'POST':
+            query="UPDATE ceny SET datum_do = datetime('now') WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND id_typu_materialu = '"+str(request.args['material_id'])+"'"
+            connection.execute(query)
+            connection.commit()
+            now = datetime.utcnow()
+            current_time = now.strftime(" %H:%M:%S")
+            date = str(request.form['date-until']) + current_time
+            print(date)
+            query="INSERT INTO ceny (datum_od, datum_do, cena, id_typu_materialu) VALUES(datetime('now'), '"+date+"', '"+str(request.form['price'])+"', '"+str(request.args['material_id'])+"');"
+            connection.execute(query)
+            connection.commit()
+            flash("Cena byla aktualizována", category="succcess")
+            return redirect('/profile/')
+        cursor = connection.cursor()
+        query = "SELECT nazev FROM typy_materialu WHERE id_typu_materialu='"+str(request.args['material_id'])+"'"
+        cursor.execute(query)
+        results=cursor.fetchall()
+        return render_template('edit_material.jinja2',material=results[0][0])
+    else:
+        return redirect('/profile/')
 if __name__ == '__main__':
     app.run(debug=True)
 

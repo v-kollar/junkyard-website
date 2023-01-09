@@ -1,21 +1,30 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Přidání materiálu | Sběrné suroviny</title>{% endblock %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=false) %}
+{% if messages %}
+    {% for message in messages %}
+    <section><h2>{{ message }}</h2></section>
+    {% endfor %}
+{% endif %}    
+{% endwith %}
 <div class="reg_container">
     
-    <form action="">
+    <form method="POST">
         <h1>Přidání materiálu</h1>
         
         <div class="form-group">
             <label for="">Název</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" name="type" class="form-control" required maxlength="32">
         </div>
 
         <div class="form-group">
             <label for="">Cena</label>
-            <input type="text" class="form-control" required maxlength="32">
+            <input type="text" name="price" class="form-control" required maxlength="32">
         </div>
-    
+        
+        <label>Platnost do</label>
+        <input type="date" id="date-until" name="date-until" required>
         
         <input type="submit" class="btn" value="Přidat">
         

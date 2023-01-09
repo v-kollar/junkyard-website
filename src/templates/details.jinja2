@@ -9,18 +9,21 @@ Detaily sběru
 <div class="row">
 <div class="cols">
   <h2>Název</h2>
-	<p>Lorem ipsum</p>
-	<p>Bob</p>
+    {% for i in collection %}
+	<p>{{i[0]}}</p>
+	{%endfor%}
 </div>
 <div class="cols">
   <h2>Hmotnost</h2>
-	<p>Lorem Ipsum</p>
-	<p>Škrob</p>
+    {% for i in collection %}
+	<p>{{i[1]}}</p>
+	{%endfor%}
 </div>
 <div class="cols">
   <h2>Částka</h2>
-	<p>Lorem Ipsum</p>
-	<p>Škrob</p>
+    {% for i in collection %}
+	<p>{{i[2]}}</p>
+	{%endfor%}
 </div>
 </div>
 
