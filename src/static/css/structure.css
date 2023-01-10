@@ -601,6 +601,10 @@ h2.stats {
 	margin-left: -10%;
 }
 
+.weight, .origin {
+	width: 97%;
+}
+
 /* Statistiky a změna ceníku */
 
 .row {
@@ -679,6 +683,17 @@ h2.stats {
   border-color: rgba(0, 0, 0, 0.19);
 }
 
+.collection__modification {
+	margin-left: 40px;
+	margin-bottom: 25px;
+	font-size: 24px;
+	width: 30%;
+}
+
+.phone { 
+	margin-bottom: 8px;
+}
+
 /* Muj ucet flex */
 
 .side-by-side {
@@ -737,6 +752,17 @@ h2.stats {
 	.col.date > p {
 		font-size: 12px;
 		margin-top: 5px;
+	}
+
+	.collection__modification {
+	  margin-left: 40px;
+	  margin-bottom: 25px;
+	  font-size: 24px;
+    width: 100%;
+  }
+
+	.insert {
+		width: 33%;
 	}
 }
 

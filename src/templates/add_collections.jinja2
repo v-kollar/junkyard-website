@@ -7,35 +7,46 @@ Zadání sběru
 </h1>
 
 <form class="collection__modification"
-      name="collection__modification" method="POST">
-<div class="wrapper">
-  <div>
-  {% for i in materials %}
-  <label for="materials">{{i[1]}}</label>
-  {%endfor%}
-	</div>		
-	<div>
-    <label for="phone">Telefon sběrače</label>
-    <input id="phone" type="tel" placeholder="123456789" name="phone" required>
-  </div>
-  <div class="closer">
+      name="collection__modification" method="POST">	
+  <label class="phone" for="phone">Telefon sběrače</label>
+  <input id="phone" class="phone" type="tel" name="phone" required>
 
-    <label for="weight">Hmotnost</label>
-      {% for i in materials %}
-      <input id="weight" type="text" name="{{i[0]}}">
-      {%endfor%}
-  </div>
-
-	<div class="closer">
-    <label for="origin">Původ</label>
-    {% for i in materials %}
-    <input id="weight" type="text" name="{{i[0]}}">
-    {%endfor%}
-	</div>
   <input type="submit" class="btn" value="Zadat sběr">
 
 </div>
 </form>
+
+
+<div class="row">
+
+<div class="col price">
+  <h2>Název</h2>
+  {% for i in materials %}
+	<form method="POST">
+    <p>{{i[1]}}</p>
+  </form>
+  {% endfor %}
+</div>
+
+<div class="col weight">
+  <h2>Hmotnost</h2>
+	{% for i in materials %}
+	<form method="POST">
+	<input id="weight" type="text" name="{{i[0]}}"></input>
+	</form>
+	{% endfor %}
+</div>
+
+<div class="col origin">
+<h2>Původ</h2>
+  {% for i in materials %}
+	<form method="POST">
+	<input id="origin" type="text" name="{{i[0]}}"></input>
+	{% endfor %}
+</div>
+
+</div>
+
 
 
 {% endblock %}
