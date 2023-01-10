@@ -15,4 +15,4 @@ RUN pip3 install -r requirements.txt
 EXPOSE 5001
 
 # Start the web server using production server Gunicorn
-ENTRYPOINT ["gunicorn", "app:app", "--workers=1", "--bind=0.0.0.0:5001"]
+ENTRYPOINT ["gunicorn", "app:app", "--workers=10", "--bind=0.0.0.0:5001"]
