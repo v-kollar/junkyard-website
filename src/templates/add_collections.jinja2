@@ -1,14 +1,6 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Zadání sběru | Sběrné suroviny</title>{% endblock %}
 {% block content %}
-{% with messages = get_flashed_messages(with_categories=false) %}
-{% if messages %}
-    {% for message in messages %}
-    <section><h2 class="flash_message">{{ message }}</h2></section>
-    {% endfor %}
-{% endif %}    
-{% endwith %}
-
 
 <h1 class="headline">
 Zadání sběru
