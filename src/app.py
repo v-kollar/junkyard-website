@@ -59,8 +59,7 @@ def total_each_material() -> Any:
                    "JOIN typy_materialu ON (typy_materialu.id_typu_materialu = " \
                    "polozka.id_typu_materialu) GROUP BY " \
                    "typy_materialu.id_typu_materialu;"
-    total = process_query(total_weight)
-    return total
+    return process_query(total_weight)
 
 def total_yearly_weight() -> Any:
     yearly_weight = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) " \
@@ -69,36 +68,41 @@ def total_yearly_weight() -> Any:
                     "ON (typy_materialu.id_typu_materialu = " \
                     "polozka.id_typu_materialu) GROUP BY " \
                     "strftime('%Y',cas_odevzdani);"
-    yearly = process_query(yearly_weight)
-    return yearly
+    return process_query(yearly_weight)
 
 def total_yearly_profit() -> Any:
     total_profit = "SELECT strftime('%Y',cas_odevzdani) AS rok, " \
                    "SUM(cena*mnozstvi) AS cena FROM sbery JOIN polozka ON " \
                    "(sbery.id_sberu = polozka.id_sberu) JOIN ceny ON " \
                    "(polozka.id_ceny = ceny.id_ceny) GROUP BY " \
-                   "strftime('%Y',cas_odevzdani)"
-    profit = process_query(total_profit)
-    return profit
+                   "strftime('%Y',cas_odevzdani);"
+    return process_query(total_profit)
 
 
-
-@app.route('/cenik',methods=['GET','POST'])
+@app.route('/cenik', methods = ['GET', 'POST'])
 def pricelist() -> ResponseReturnValue:
-    connection = sqlite3.connect(DB_PATH)
-    cursor = connection.cursor()
     if request.method == 'POST':
-            search = request.form['search']
-            query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND nazev= '"+search+"' AND datum_do >= datetime('now')"
-            cursor.execute(query)
-            results = cursor.fetchall()
-            connection.close()
-            return render_template("pricelist.jinja2",materials=results)
-    query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now')"
-    cursor.execute(query)
-    results = cursor.fetchall()
-    connection.close()
-    return render_template("pricelist.jinja2",materials=results)
+        search = request.form['search']
+        return render_template("pricelist.jinja2",
+                               materials=search_pricelist(search))
+
+    return render_template("pricelist.jinja2", materials=not_searching())
+
+
+def search_pricelist(word: str) -> Any:
+    looked_query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON" \
+                   "(ceny.id_typu_materialu = typy_materialu.id_typu_materialu)" \
+                   "WHERE datum_od <= datetime('now') AND nazev= " \
+                   f"'{word}' AND datum_do >= datetime('now');"
+    return process_query(looked_query)
+
+def not_searching() -> Any:
+    none_query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON" \
+                 "(ceny.id_typu_materialu = typy_materialu.id_typu_materialu)" \
+                 "WHERE datum_od <= datetime('now') AND datum_do >= datetime('now');"
+    return process_query(none_query)
+
+
 
 
 @app.route('/prihlaseni', methods=['GET','POST'])
