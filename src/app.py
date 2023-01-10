@@ -2,13 +2,14 @@ from flask import Flask, render_template, request,\
     session, redirect, flash, template_rendered, url_for
 import sqlite3
 from datetime import datetime
+from flask.typing import ResponseReturnValue
 
 app = Flask(__name__)
 app.secret_key = "klic"
 
 
 @app.route('/')
-def home():
+def home() -> ResponseReturnValue:
     connection = sqlite3.connect('database/sberna.db')
     cursor = connection.cursor()
     query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM (SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
@@ -22,7 +23,7 @@ def home():
 
 
 @app.route('/statistiky')
-def stats():
+def stats() -> ResponseReturnValue:
     connection = sqlite3.connect('database/sberna.db')
     cursor = connection.cursor()
     query = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY typy_materialu.id_typu_materialu"
@@ -39,7 +40,7 @@ def stats():
 
 
 @app.route('/cenik',methods=['GET','POST'])
-def pricelist():
+def pricelist() -> ResponseReturnValue:
     connection = sqlite3.connect('database/sberna.db')
     cursor = connection.cursor()
     if request.method == 'POST':
@@ -57,7 +58,7 @@ def pricelist():
 
 
 @app.route('/prihlaseni', methods=['GET','POST'])
-def login():
+def login() -> ResponseReturnValue:
     if request.method == 'POST':
         connection = sqlite3.connect('database/sberna.db')
         cursor = connection.cursor()
@@ -82,7 +83,7 @@ def login():
 
 
 @app.route('/profile/')
-def profile():
+def profile() -> ResponseReturnValue:
     if "user" in session:
         return render_template("profile.jinja2")
     else:
@@ -90,13 +91,13 @@ def profile():
 
 
 @app.route('/odhlaseni')
-def logout():
+def logout() -> ResponseReturnValue:
     flash("Byli jste odhlášeni", category="success")
     session.pop("user", None)
     return redirect('/prihlaseni')
 
 @app.route('/registrace', methods=['GET','POST'])
-def reg():
+def reg() -> ResponseReturnValue:
     if "user" in session:
         return redirect('/profile/')
     if request.method == 'POST':
@@ -123,7 +124,7 @@ def reg():
     return render_template("reg.jinja2")
 
 @app.route('/profile/zmena_svych_udaju',methods=['GET','POST'])
-def change_your_details():
+def change_your_details() -> ResponseReturnValue:
     if "user" in session:
         if request.method == 'POST':
             connection = sqlite3.connect('database/sberna.db')
@@ -152,7 +153,7 @@ def change_your_details():
 
 
 @app.route('/profile/zadosti_o_registraci',methods=['GET','POST'])
-def applications_for_registration():
+def applications_for_registration() -> ResponseReturnValue:
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2) and request.method == 'POST':
         connection = sqlite3.connect('database/sberna.db')
         cursor = connection.cursor()
@@ -171,7 +172,7 @@ def applications_for_registration():
     
 
 @app.route('/profile/zadosti_o_registraci/zadost_o_registraci',methods=['GET','POST'])
-def application_for_registration():
+def application_for_registration() -> ResponseReturnValue:
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
         connection = sqlite3.connect('database/sberna.db')
         user_id = request.args['user_id']
@@ -195,7 +196,7 @@ def application_for_registration():
         return redirect('/profile/')
 
 @app.route('/profile/sprava/pridat_uzivatele',methods=['GET','POST'])
-def create_user():
+def create_user() -> ResponseReturnValue:
     connection = sqlite3.connect('database/sberna.db')
     if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
         cursor = connection.cursor()
@@ -230,7 +231,7 @@ def create_user():
 
 
 @app.route('/profile/sprava/uprava_uzivatele',methods=['GET','POST'])
-def edit_user():
+def edit_user() -> ResponseReturnValue:
     if "user" in session and session['user'][0][2] == 1:
         user_id = request.args['user_id']
         if request.method == 'POST':
@@ -281,7 +282,7 @@ def edit_user():
 
 
 @app.route('/profile/zmena-ceniku/pridani_materialu',methods=['GET','POST'])
-def add_material():
+def add_material() -> ResponseReturnValue:
     if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
         connection = sqlite3.connect('database/sberna.db')
         cursor = connection.cursor()
@@ -322,7 +323,7 @@ def add_material():
     
 
 @app.route('/profile/moje-sbery/detaily-sberu')
-def collection_details():
+def collection_details() -> ResponseReturnValue:
     connection = sqlite3.connect('sberna.db')
     cursor = connection.cursor()
     query="SELECT nazev, mnozstvi AS hmostnost, cena*mnozstvi AS castka,cena,STRFTIME('%Y-%m-%d', cas_odevzdani) FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
@@ -332,7 +333,7 @@ def collection_details():
     return render_template("details.jinja2",collection=results)
 
 @app.route('/profile/sprava',methods=['GET','POST'])
-def user_management():
+def user_management() -> ResponseReturnValue:
     if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
         connection = sqlite3.connect('database/sberna.db')
         cursor = connection.cursor()
@@ -352,7 +353,7 @@ def user_management():
 
 
 @app.route('/profile/moje-sbery',methods=['GET','POST'])
-def my_collections():
+def my_collections() -> ResponseReturnValue:
     if "user" in session:
         connection = sqlite3.connect('database/sberna.db')
         cursor = connection.cursor()
@@ -381,7 +382,7 @@ def my_collections():
 
 @app.route('/profile/zadani-sberu',methods=['GET','POST'])
 
-def insert_collection():
+def insert_collection() -> ResponseReturnValue:
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
         connection = sqlite3.connect('database/sberna.db')
         if request.method == 'POST':
@@ -401,7 +402,7 @@ def insert_collection():
         return redirect('/profile/')
 
 @app.route('/profile/zmena-ceniku',methods=['GET','POST'])
-def change_pricelist():
+def change_pricelist() -> ResponseReturnValue:
     if "user" in session and session['user'][0][2] == 1:
         connection = sqlite3.connect('database/sberna.db')
         cursor = connection.cursor()
@@ -419,7 +420,7 @@ def change_pricelist():
     else:
         return redirect('/profile/')
 @app.route('/profile/zmena-ceniku/uprava-polozky',methods=['GET','POST'])
-def edit_material():
+def edit_material() -> ResponseReturnValue:
     if "user" in session and session['user'][0][2] == 1:
         connection = sqlite3.connect('database/sberna.db')
         if request.method == 'POST':
