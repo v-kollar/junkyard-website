@@ -487,6 +487,10 @@ h2.stats {
 	margin-top: 7px;
 }
 
+.payout {
+	margin-left: 40px;
+	margin-bottom: 20px;
+}
 
 /* Zadání sběru */
 
@@ -761,8 +765,8 @@ h2.stats {
     width: 100%;
   }
 
-	.insert {
-		width: 33%;
+	.payout {
+		width: 80%;
 	}
 }
 
