@@ -1,45 +1,83 @@
 from flask import Flask, render_template, request,\
-    session, redirect, flash, template_rendered, url_for
-import sqlite3
-import os
+    session, redirect, flash, url_for
 from datetime import datetime
 from flask.typing import ResponseReturnValue
+from typing import List, Tuple, Any
+import sqlite3
+import os
 
 app = Flask(__name__)
 app.secret_key = "klic"
 
+Query = List[Tuple[Any]]
+
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 DB_PATH = os.path.join(PROJECT_ROOT, 'database/sberna.db')
 
-@app.route('/')
-def home() -> ResponseReturnValue:
+def process_query(query: str) -> Query:
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
-    query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM (SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
     cursor.execute(query)
-    weight = cursor.fetchall()
-    query = "SELECT SUM(cena*mnozstvi) castka FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year')"
-    cursor.execute(query)
-    paid=cursor.fetchall()
+    data = cursor.fetchall()
     connection.close()
-    return render_template("index.jinja2", weight=str(weight[0][0])+" Kg", paid=str(paid[0][0])+" Kč")
+    return data
+
+@app.route('/')
+def home() -> ResponseReturnValue:
+    return render_template("index.jinja2", weight=f"{material_per_year()} Kg",
+                                           paid=f"{paid_per_year()} Kč")
+
+def material_per_year() -> Any:
+    weight_query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM " \
+            "(SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery " \
+            "JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) " \
+            "WHERE sbery.cas_odevzdani > datetime('now', '-1 year') " \
+            "GROUP BY sbery.id_sberu)"
+    weight = process_query(weight_query)
+    return weight[0][0]
+
+def paid_per_year() -> Any:
+    paid_query = "SELECT SUM(cena*mnozstvi) castka FROM sbery JOIN polozka " \
+            "ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny " \
+            "ON (ceny.id_ceny = polozka.id_ceny) " \
+            "WHERE sbery.cas_odevzdani > datetime('now', '-1 year')"
+    paid = process_query(paid_query)
+    return paid[0][0]
 
 
 @app.route('/statistiky')
 def stats() -> ResponseReturnValue:
     connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
-    query = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY typy_materialu.id_typu_materialu"
+    query = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi " \
+            "FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) " \
+            "JOIN typy_materialu ON " \
+            "(typy_materialu.id_typu_materialu = polozka.id_typu_materialu) " \
+            "GROUP BY typy_materialu.id_typu_materialu"
+
     cursor.execute(query)
     material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) AS mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY strftime('%Y',cas_odevzdani)"
+    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) " \
+            "AS mnozstvi FROM sbery JOIN polozka ON " \
+            "(sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu " \
+            "ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) " \
+            "GROUP BY strftime('%Y',cas_odevzdani)"
+
     cursor.execute(query)
     yearly_material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena*mnozstvi) AS cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) GROUP BY strftime('%Y',cas_odevzdani)"
+    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena*mnozstvi) " \
+            "AS cena FROM sbery JOIN polozka ON " \
+            "(sbery.id_sberu = polozka.id_sberu) JOIN ceny ON " \
+            "(polozka.id_ceny = ceny.id_ceny) " \
+            "GROUP BY strftime('%Y',cas_odevzdani)"
+
     cursor.execute(query)
     income_total=cursor.fetchall()
     connection.close()
-    return render_template("stats.jinja2",material_total=material_total, yearly_material_total=yearly_material_total, income_total=income_total)
+    return render_template("stats.jinja2",
+                           material_total=material_total,
+                           yearly_material_total=yearly_material_total,
+                           income_total=income_total)
 
 
 @app.route('/cenik',methods=['GET','POST'])
