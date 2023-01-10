@@ -32,7 +32,7 @@ def material_per_year() -> Any:
             "(SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery " \
             "JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) " \
             "WHERE sbery.cas_odevzdani > datetime('now', '-1 year') " \
-            "GROUP BY sbery.id_sberu)"
+            "GROUP BY sbery.id_sberu);"
     weight = process_query(weight_query)
     return weight[0][0]
 
@@ -40,44 +40,47 @@ def paid_per_year() -> Any:
     paid_query = "SELECT SUM(cena*mnozstvi) castka FROM sbery JOIN polozka " \
             "ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny " \
             "ON (ceny.id_ceny = polozka.id_ceny) " \
-            "WHERE sbery.cas_odevzdani > datetime('now', '-1 year')"
+            "WHERE sbery.cas_odevzdani > datetime('now', '-1 year');"
     paid = process_query(paid_query)
     return paid[0][0]
 
 
 @app.route('/statistiky')
 def stats() -> ResponseReturnValue:
-    connection = sqlite3.connect(DB_PATH)
-    cursor = connection.cursor()
-    query = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi " \
-            "FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) " \
-            "JOIN typy_materialu ON " \
-            "(typy_materialu.id_typu_materialu = polozka.id_typu_materialu) " \
-            "GROUP BY typy_materialu.id_typu_materialu"
-
-    cursor.execute(query)
-    material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) " \
-            "AS mnozstvi FROM sbery JOIN polozka ON " \
-            "(sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu " \
-            "ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) " \
-            "GROUP BY strftime('%Y',cas_odevzdani)"
-
-    cursor.execute(query)
-    yearly_material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena*mnozstvi) " \
-            "AS cena FROM sbery JOIN polozka ON " \
-            "(sbery.id_sberu = polozka.id_sberu) JOIN ceny ON " \
-            "(polozka.id_ceny = ceny.id_ceny) " \
-            "GROUP BY strftime('%Y',cas_odevzdani)"
-
-    cursor.execute(query)
-    income_total=cursor.fetchall()
-    connection.close()
     return render_template("stats.jinja2",
-                           material_total=material_total,
-                           yearly_material_total=yearly_material_total,
-                           income_total=income_total)
+                           material_total=total_each_material(),
+                           yearly_material_total=total_yearly_weight(),
+                           income_total=total_yearly_profit())
+
+
+def total_each_material() -> Any:
+    total_weight = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi " \
+                   "FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) " \
+                   "JOIN typy_materialu ON (typy_materialu.id_typu_materialu = " \
+                   "polozka.id_typu_materialu) GROUP BY " \
+                   "typy_materialu.id_typu_materialu;"
+    total = process_query(total_weight)
+    return total
+
+def total_yearly_weight() -> Any:
+    yearly_weight = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) " \
+                    "AS mnozstvi FROM sbery JOIN polozka ON " \
+                    "(sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu " \
+                    "ON (typy_materialu.id_typu_materialu = " \
+                    "polozka.id_typu_materialu) GROUP BY " \
+                    "strftime('%Y',cas_odevzdani);"
+    yearly = process_query(yearly_weight)
+    return yearly
+
+def total_yearly_profit() -> Any:
+    total_profit = "SELECT strftime('%Y',cas_odevzdani) AS rok, " \
+                   "SUM(cena*mnozstvi) AS cena FROM sbery JOIN polozka ON " \
+                   "(sbery.id_sberu = polozka.id_sberu) JOIN ceny ON " \
+                   "(polozka.id_ceny = ceny.id_ceny) GROUP BY " \
+                   "strftime('%Y',cas_odevzdani)"
+    profit = process_query(total_profit)
+    return profit
+
 
 
 @app.route('/cenik',methods=['GET','POST'])
