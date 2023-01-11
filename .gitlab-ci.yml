@@ -3,30 +3,52 @@ stages:
   - build
   - deploy
 
-run_tests:
+
+html-validate:
    stage: test
-   image: python:3.9-slim-buster
-   allow_failure: true
    only:
     - main
+   allow_failure: true
    before_script:
-     - python --version
-     - pip install -r src/requirements.txt
-     # - npm install -g html-validate
+     - npm install -g html-validate
      - cd src/
    script:
-     # - npx html-validate
+     - npx html-validate *.jinja2
+
+flake8:
+   stage: test
+   only:
+    - main
+   allow_failure: true
+   before_script:
+     - pip install flake8
+     - cd src/
+   script:
      - flake8 app.py
+
+mypy:
+   stage: test
+   only:
+    - main
+   allow_failure: true
+   before_script:
+     - pip install mypy
+     - cd src/
+   script:
      - mypy --strict app.py
 
+
+
+# Credits in regard to Kaniko goes to Darwin Sanoy
+# https://gitlab.com/guided-explorations/containers/kaniko-docker-build/-/blob/master/.gitlab-ci.yml
 image: 
   name: gcr.io/kaniko-project/executor:debug
   entrypoint: [""]
 
+
 variables: 
-  # More Information on Kaniko Caching: https://cloud.google.com/build/docs/kaniko-cache
   KANIKO_CACHE_ARGS: "--cache=true --cache-copy-layers=true --cache-ttl=24h"
-  VERSIONLABELMETHOD: "OnlyIfThisCommitHasVersion" # options: "OnlyIfThisCommitHasVersion","LastVersionTagInGit"
+  VERSIONLABELMETHOD: "OnlyIfThisCommitHasVersion"
   IMAGE_LABELS: >
     --label org.opencontainers.image.vendor=$CI_SERVER_URL/$GITLAB_USER_LOGIN
     --label org.opencontainers.image.authors=$CI_SERVER_URL/$GITLAB_USER_LOGIN
@@ -43,6 +65,7 @@ variables:
     --label com.gitlab.ci.commiturl=$CI_PROJECT_URL/commit/$CI_COMMIT_SHA
     --label com.gitlab.ci.cijoburl=$CI_JOB_URL
     --label com.gitlab.ci.mrurl=$CI_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_ID
+
 
 get-latest-git-version:
   stage: .pre
@@ -105,22 +128,21 @@ get-latest-git-version:
       /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile $KANIKO_CACHE_ARGS $FORMATTEDTAGLIST $IMAGE_LABELS
 
 
-build-for-docker-hub-registry_new:
-  only:
-    - main
+docker-hub-build-registry:
   extends: .build_with_kaniko
   stage: build
-  # CI CD Variables will be taken from GitLab Project definition for variable scope "push-to-docker-hub", 
-  # which overrides CI_REGISTRY, CI_REGISTRY_IMAGE, CI_REGISTRY_USER and CI_REGISTRY_PASSWORD
-  # these variables with this scope would need to be created if you copy this project to another group or instance
+  only:
+    - main
   environment:
     name: push-to-docker-hub
 
-deploy:
+
+azure-deploy:
+  image: ruby:3.1.1
+  stage: deploy
+  needs: [docker-hub-build-registry]
   only:
     - main
-  image: ruby:latest
-  stage: deploy
   before_script:
     - chmod 400 $SSH_KEY
   script:
@@ -128,3 +150,4 @@ deploy:
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD &&
         docker pull kkemis/vwa && docker container rm -f vwa || true &&
         docker run -d --name vwa -p 80:5001 kkemis/vwa"
+  
