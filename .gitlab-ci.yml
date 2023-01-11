@@ -44,6 +44,8 @@ variables:
     --label com.gitlab.ci.mrurl=$CI_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_ID
 
 get-latest-git-version:
+  only:
+    - main
   stage: .pre
   image: 
     name: alpine/git
@@ -63,6 +65,8 @@ get-latest-git-version:
 
 
 .build_with_kaniko:
+  only:
+    - main
   #Hidden job to use as an "extends" template
   stage: build
   script:
@@ -103,6 +107,8 @@ get-latest-git-version:
 
 
 build-for-docker-hub-registry_new:
+  only:
+    - main
   extends: .build_with_kaniko
   stage: build
   #This causes CI CD Variables to be taken from GitLab Project definition for variable scope "push-to-docker-hub", 
@@ -111,6 +117,8 @@ build-for-docker-hub-registry_new:
   environment:
     name: push-to-docker-hub
 deploy:
+  only:
+    - main
   image: ruby:latest
   stage: deploy
   before_script:
