@@ -791,6 +791,16 @@ h2.stats {
 	.col.price p {
 	margin-top: 10px;
 	}
+
+	section h1 {
+		margin-bottom: 20px;
+	}
+
+	section h2 {
+		padding-top: 20px;
+		margin-left: 20px;
+		margin-right: 20px;
+	}
 }
 
 .side-by-side h3 {
