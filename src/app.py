@@ -1,63 +1,114 @@
-from flask import Flask, render_template, request, session, redirect, flash, template_rendered, url_for
-import sqlite3
+from flask import Flask, render_template, request,\
+    session, redirect, flash, url_for
 from datetime import datetime
+from flask.typing import ResponseReturnValue
+from typing import List, Tuple, Any
+import sqlite3
+import os
+
 app = Flask(__name__)
 app.secret_key = "klic"
 
+Query = List[Tuple[Any]]
+
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+DB_PATH = os.path.join(PROJECT_ROOT, 'database/sberna.db')
+
+def process_query(query: str) -> Query:
+    connection = sqlite3.connect(DB_PATH)
+    cursor = connection.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    connection.close()
+    return data
 
 @app.route('/')
-def home():
-    connection = sqlite3.connect('sberna.db')
-    cursor = connection.cursor()
-    query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM (SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) WHERE sbery.cas_odevzdani > datetime('now', '-1 year') GROUP BY sbery.id_sberu)"
-    cursor.execute(query)
-    weight = cursor.fetchall()
-    query = "SELECT SUM(cena*mnozstvi) castka FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE sbery.cas_odevzdani > datetime('now', '-1 year')"
-    cursor.execute(query)
-    paid=cursor.fetchall()
-    connection.close()
-    return render_template("index.jinja2", weight=str(weight[0][0])+" Kg", paid=str(paid[0][0])+" Kč")
+def home() -> ResponseReturnValue:
+    return render_template("index.jinja2", weight=f"{material_per_year()} Kg",
+                                           paid=f"{paid_per_year()} Kč")
+
+def material_per_year() -> Any:
+    weight_query = "SELECT SUM(mnozstvi) mnozstvi_za_rok FROM " \
+            "(SELECT sbery.id_sberu, SUM(mnozstvi) mnozstvi FROM sbery " \
+            "JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) " \
+            "WHERE sbery.cas_odevzdani > datetime('now', '-1 year') " \
+            "GROUP BY sbery.id_sberu);"
+    weight = process_query(weight_query)
+    return weight[0][0]
+
+def paid_per_year() -> Any:
+    paid_query = "SELECT SUM(cena*mnozstvi) castka FROM sbery JOIN polozka " \
+            "ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny " \
+            "ON (ceny.id_ceny = polozka.id_ceny) " \
+            "WHERE sbery.cas_odevzdani > datetime('now', '-1 year');"
+    paid = process_query(paid_query)
+    return paid[0][0]
 
 
 @app.route('/statistiky')
-def stats():
-    connection = sqlite3.connect('sberna.db')
-    cursor = connection.cursor()
-    query = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY typy_materialu.id_typu_materialu"
-    cursor.execute(query)
-    material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) AS mnozstvi FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) GROUP BY strftime('%Y',cas_odevzdani)"
-    cursor.execute(query)
-    yearly_material_total=cursor.fetchall()
-    query = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(cena*mnozstvi) AS cena FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (polozka.id_ceny = ceny.id_ceny) GROUP BY strftime('%Y',cas_odevzdani)"
-    cursor.execute(query)
-    income_total=cursor.fetchall()
-    connection.close()
-    return render_template("stats.jinja2",material_total=material_total, yearly_material_total=yearly_material_total, income_total=income_total)
+def stats() -> ResponseReturnValue:
+    return render_template("stats.jinja2",
+                           material_total=total_each_material(),
+                           yearly_material_total=total_yearly_weight(),
+                           income_total=total_yearly_profit())
 
 
-@app.route('/cenik',methods=['GET','POST'])
-def pricelist():
-    connection = sqlite3.connect('sberna.db')
-    cursor = connection.cursor()
+def total_each_material() -> Any:
+    total_weight = "SELECT typy_materialu.nazev, SUM(mnozstvi) celkove_mnozstvi " \
+                   "FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) " \
+                   "JOIN typy_materialu ON (typy_materialu.id_typu_materialu = " \
+                   "polozka.id_typu_materialu) GROUP BY " \
+                   "typy_materialu.id_typu_materialu;"
+    return process_query(total_weight)
+
+def total_yearly_weight() -> Any:
+    yearly_weight = "SELECT strftime('%Y',cas_odevzdani) AS rok, SUM(mnozstvi) " \
+                    "AS mnozstvi FROM sbery JOIN polozka ON " \
+                    "(sbery.id_sberu = polozka.id_sberu) JOIN typy_materialu " \
+                    "ON (typy_materialu.id_typu_materialu = " \
+                    "polozka.id_typu_materialu) GROUP BY " \
+                    "strftime('%Y',cas_odevzdani);"
+    return process_query(yearly_weight)
+
+def total_yearly_profit() -> Any:
+    total_profit = "SELECT strftime('%Y',cas_odevzdani) AS rok, " \
+                   "SUM(cena*mnozstvi) AS cena FROM sbery JOIN polozka ON " \
+                   "(sbery.id_sberu = polozka.id_sberu) JOIN ceny ON " \
+                   "(polozka.id_ceny = ceny.id_ceny) GROUP BY " \
+                   "strftime('%Y',cas_odevzdani);"
+    return process_query(total_profit)
+
+
+@app.route('/cenik', methods = ['GET', 'POST'])
+def pricelist() -> ResponseReturnValue:
     if request.method == 'POST':
-            search = request.form['search']
-            query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND nazev= '"+search+"' AND datum_do >= datetime('now')"
-            cursor.execute(query)
-            results = cursor.fetchall()
-            connection.close()
-            return render_template("pricelist.jinja2",materials=results)
-    query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now')"
-    cursor.execute(query)
-    results = cursor.fetchall()
-    connection.close()
-    return render_template("pricelist.jinja2",materials=results)
+        search = request.form['search']
+        return render_template("pricelist.jinja2",
+                               materials=search_pricelist(search))
+
+    return render_template("pricelist.jinja2", materials=not_searching())
+
+
+def search_pricelist(word: str) -> Any:
+    looked_query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON" \
+                   "(ceny.id_typu_materialu = typy_materialu.id_typu_materialu)" \
+                   "WHERE datum_od <= datetime('now') AND nazev= " \
+                   f"'{word}' AND datum_do >= datetime('now');"
+    return process_query(looked_query)
+
+def not_searching() -> Any:
+    none_query = "SELECT nazev, cena FROM ceny JOIN typy_materialu ON" \
+                 "(ceny.id_typu_materialu = typy_materialu.id_typu_materialu)" \
+                 "WHERE datum_od <= datetime('now') AND datum_do >= datetime('now');"
+    return process_query(none_query)
+
+
 
 
 @app.route('/prihlaseni', methods=['GET','POST'])
-def login():
+def login() -> ResponseReturnValue:
     if request.method == 'POST':
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query = "SELECT potvrzeni,id_uzivatele,id_role  FROM uzivatel WHERE email= '"+request.form['email']+"' AND heslo= '"+request.form['password']+"'"
         cursor.execute(query)
@@ -80,7 +131,7 @@ def login():
 
 
 @app.route('/profile/')
-def profile():
+def profile() -> ResponseReturnValue:
     if "user" in session:
         return render_template("profile.jinja2")
     else:
@@ -88,17 +139,17 @@ def profile():
 
 
 @app.route('/odhlaseni')
-def logout():
+def logout() -> ResponseReturnValue:
     flash("Byli jste odhlášeni", category="success")
     session.pop("user", None)
     return redirect('/prihlaseni')
 
 @app.route('/registrace', methods=['GET','POST'])
-def reg():
+def reg() -> ResponseReturnValue:
     if "user" in session:
         return redirect('/profile/')
     if request.method == 'POST':
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query ="SELECT email,telefon FROM uzivatel WHERE telefon='"+request.form['phone']+"' OR email='"+request.form['email']+"'"
         cursor.execute(query)
@@ -121,10 +172,10 @@ def reg():
     return render_template("reg.jinja2")
 
 @app.route('/profile/zmena_svych_udaju',methods=['GET','POST'])
-def change_your_details():
+def change_your_details() -> ResponseReturnValue:
     if "user" in session:
         if request.method == 'POST':
-            connection = sqlite3.connect('sberna.db')
+            connection = sqlite3.connect(DB_PATH)
             cursor = connection.cursor()
             query = "SELECT heslo FROM uzivatel WHERE id_uzivatele='"+str(session["user"][0][1])+"'"
             cursor.execute(query)
@@ -138,7 +189,7 @@ def change_your_details():
             connection.commit()
             flash("Údaje byly aktualizovány", category="success")
 
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query = "SELECT jmeno,prijmeni,adresa_trvaleho_bydliste, adresa_docasneho_bydliste, email, telefon, cislo_uctu, heslo FROM uzivatel WHERE id_uzivatele='"+str(session["user"][0][1])+"'"
         cursor.execute(query)
@@ -150,9 +201,9 @@ def change_your_details():
 
 
 @app.route('/profile/zadosti_o_registraci',methods=['GET','POST'])
-def applications_for_registration():
+def applications_for_registration() -> ResponseReturnValue:
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2) and request.method == 'POST':
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query = "SELECT id_uzivatele FROM uzivatel WHERE telefon='"+request.form['phone']+"' AND potvrzeni=0"
         cursor.execute(query)
@@ -169,9 +220,9 @@ def applications_for_registration():
     
 
 @app.route('/profile/zadosti_o_registraci/zadost_o_registraci',methods=['GET','POST'])
-def application_for_registration():
+def application_for_registration() -> ResponseReturnValue:
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         user_id = request.args['user_id']
         if request.method == 'POST':
             if request.form['button'] == "Potvrdit":
@@ -193,8 +244,8 @@ def application_for_registration():
         return redirect('/profile/')
 
 @app.route('/profile/sprava/pridat_uzivatele',methods=['GET','POST'])
-def create_user():
-    connection = sqlite3.connect('sberna.db')
+def create_user() -> ResponseReturnValue:
+    connection = sqlite3.connect(DB_PATH)
     if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
         cursor = connection.cursor()
         query ="SELECT email,telefon FROM uzivatel WHERE telefon='"+request.form['phone']+"' OR email='"+request.form['email']+"'"
@@ -228,12 +279,12 @@ def create_user():
 
 
 @app.route('/profile/sprava/uprava_uzivatele',methods=['GET','POST'])
-def edit_user():
+def edit_user() -> ResponseReturnValue:
     if "user" in session and session['user'][0][2] == 1:
         user_id = request.args['user_id']
         if request.method == 'POST':
             if request.form['button'] == "Aktualizovat":
-                connection = sqlite3.connect('sberna.db')
+                connection = sqlite3.connect(DB_PATH)
                 cursor = connection.cursor()
                 query = "SELECT heslo FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
                 cursor.execute(query)
@@ -248,14 +299,14 @@ def edit_user():
                 flash("Údaje byly aktualizovány", category="success")
                 return redirect(url_for('user_management'))
             else:
-                connection = sqlite3.connect('sberna.db')
+                connection = sqlite3.connect(DB_PATH)
                 query="DELETE FROM uzivatel WHERE id_uzivatele='"+user_id+"'"
                 connection.execute(query)
                 connection.commit()
                 flash("Uživatel byl odstraněn", category="success")
                 return redirect(url_for('user_management'))
 
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query = "SELECT jmeno,prijmeni,adresa_trvaleho_bydliste, adresa_docasneho_bydliste, email, telefon, cislo_uctu, heslo,role.nazev,role.id_role FROM uzivatel JOIN role ON(uzivatel.id_role=role.id_role) WHERE id_uzivatele='"+user_id+"'"
         cursor.execute(query)
@@ -279,9 +330,9 @@ def edit_user():
 
 
 @app.route('/profile/zmena-ceniku/pridani_materialu',methods=['GET','POST'])
-def add_material():
+def add_material() -> ResponseReturnValue:
     if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query="SELECT nazev FROM typy_materialu"
         cursor.execute(query)
@@ -320,8 +371,8 @@ def add_material():
     
 
 @app.route('/profile/moje-sbery/detaily-sberu')
-def collection_details():
-    connection = sqlite3.connect('sberna.db')
+def collection_details() -> ResponseReturnValue:
+    connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
     query="SELECT nazev, mnozstvi AS hmostnost, cena*mnozstvi AS castka,cena,STRFTIME('%Y-%m-%d', cas_odevzdani) FROM sbery JOIN polozka ON (sbery.id_sberu = polozka.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) JOIN typy_materialu ON (typy_materialu.id_typu_materialu = polozka.id_typu_materialu) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND sbery.id_sberu= '"+request.args['collection_id']+"'"
     cursor.execute(query)
@@ -330,9 +381,9 @@ def collection_details():
     return render_template("details.jinja2",collection=results)
 
 @app.route('/profile/sprava',methods=['GET','POST'])
-def user_management():
+def user_management() -> ResponseReturnValue:
     if request.method == 'POST' and "user" in session and session['user'][0][2] == 1:
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query = "SELECT id_uzivatele FROM uzivatel WHERE id_uzivatele='"+request.form['user_id']+"' OR telefon='"+request.form['phone']+"'"
         cursor.execute(query)
@@ -350,9 +401,9 @@ def user_management():
 
 
 @app.route('/profile/moje-sbery',methods=['GET','POST'])
-def my_collections():
+def my_collections() -> ResponseReturnValue:
     if "user" in session:
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         query = "SELECT SUM(cena*mnozstvi) AS vyplatit_za_mesic FROM sbery JOIN polozka ON (polozka.id_sberu = sbery.id_sberu) JOIN ceny ON (ceny.id_ceny = polozka.id_ceny) WHERE id_uzivatele = '"+str(session['user'][0][1])+"' AND cas_odevzdani >= DATE('now', 'start of month')"
         cursor.execute(query)
@@ -378,39 +429,47 @@ def my_collections():
         return redirect('/profile/')
 
 @app.route('/profile/zadani-sberu',methods=['GET','POST'])
-
-def insert_collection():
+def insert_collection() -> ResponseReturnValue:
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         if request.method == 'POST':
             cursor = connection.cursor()
             query = "SELECT id_typu_materialu FROM typy_materialu"
             cursor.execute(query)
-            results=cursor.fetchall()
+            results=cursor.fetchall()  # [(29,), (30,), (31,), (32,), (33,), (34,), (35,)]
             set = True
             for i in results:
-                material=(request.form.getlist(str(i[0])))
-                if material[0] !="" and material[1] !="":
+                material = (request.form.getlist(str(i[0])))
+                if material[0] != "" and material[1] != "":
                     if set:
-                        query = "SELECT id_uzivatele from uzivatel WHERE telefon = '"+str(request.form['phone'])+"'"
+                        query = "SELECT id_uzivatele from uzivatel WHERE telefon = '" + str(
+                            request.form['phone']) + "'"
                         cursor.execute(query)
-                        user=cursor.fetchall()
+                        user = cursor.fetchall()
                         if len(user) == 0:
-                            flash("Uživatel s tímto telefon neexsituje", category="succcess")
+                            flash("Uživatel s tímto telefon neexsituje",
+                                  category="succcess")
                             return redirect('/profile/zadani-sberu')
-                        query = "INSERT INTO sbery (cas_odevzdani, id_uzivatele) VALUES(datetime('now'), '"+str(user[0][0])+"')"
+                        query = "INSERT INTO sbery (cas_odevzdani, id_uzivatele) VALUES(datetime('now'), '" + str(
+                            user[0][0]) + "')"
                         connection.execute(query)
                         connection.commit()
-                        query = "SELECT id_sberu FROM sbery WHERE id_uzivatele='"+str(user[0][0])+"' ORDER BY cas_odevzdani DESC LIMIT 1"
+                        query = "SELECT id_sberu FROM sbery WHERE id_uzivatele='" + str(
+                            user[0][
+                                0]) + "' ORDER BY cas_odevzdani DESC LIMIT 1"
                         cursor.execute(query)
-                        collection_id=cursor.fetchall()
+                        collection_id = cursor.fetchall()
                         set = False
                     cursor = connection.cursor()
-                    query = "SELECT id_ceny FROM typy_materialu JOIN ceny ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND ceny.id_typu_materialu = '"+str(i[0])+"'"
+                    query = "SELECT id_ceny FROM typy_materialu JOIN ceny ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND ceny.id_typu_materialu = '" + str(
+                        i[0]) + "'"
                     cursor.execute(query)
-                    price=cursor.fetchall()
-                    print("Cena",price[0][0])
-                    query = "INSERT INTO polozka (mnozstvi, puvod, id_typu_materialu, id_sberu, id_ceny) VALUES('"+str(material[0])+"', '"+material[1]+"', '"+str(i[0])+"', '"+str(collection_id[0][0])+"', '"+str(price[0][0])+"')"
+                    price = cursor.fetchall()
+                    print("Cena", price[0][0])
+                    query = "INSERT INTO polozka (mnozstvi, puvod, id_typu_materialu, id_sberu, id_ceny) VALUES('" + str(
+                        material[0]) + "', '" + material[1] + "', '" + str(
+                        i[0]) + "', '" + str(
+                        collection_id[0][0]) + "', '" + str(price[0][0]) + "')"
                     connection.execute(query)
                     connection.commit()
             if set == False:
@@ -419,15 +478,16 @@ def insert_collection():
         cursor = connection.cursor()
         query = "SELECT id_typu_materialu, nazev FROM typy_materialu"
         cursor.execute(query)
-        results=cursor.fetchall()
-        return render_template('add_collections.jinja2',materials=results)
+        results = cursor.fetchall()
+        return render_template('add_collections.jinja2', materials=results)
     else:
         return redirect('/profile/')
 
+
 @app.route('/profile/zmena-ceniku',methods=['GET','POST'])
-def change_pricelist():
+def change_pricelist() -> ResponseReturnValue:
     if "user" in session and session['user'][0][2] == 1:
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
         if request.method == 'POST':
             if request.form['button']== "search":
@@ -443,9 +503,9 @@ def change_pricelist():
     else:
         return redirect('/profile/')
 @app.route('/profile/zmena-ceniku/uprava-polozky',methods=['GET','POST'])
-def edit_material():
+def edit_material() -> ResponseReturnValue:
     if "user" in session and session['user'][0][2] == 1:
-        connection = sqlite3.connect('sberna.db')
+        connection = sqlite3.connect(DB_PATH)
         if request.method == 'POST':
             query="UPDATE ceny SET datum_do = datetime('now') WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND id_typu_materialu = '"+str(request.args['material_id'])+"'"
             connection.execute(query)
@@ -466,6 +526,7 @@ def edit_material():
         return render_template('edit_material.jinja2',material=results[0][0])
     else:
         return redirect('/profile/')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
