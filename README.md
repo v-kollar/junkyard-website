@@ -1,27 +1,25 @@
-# VWA Projekt sběrna
-## Funkční aplikace
-[http://vwa.westeurope.cloudapp.azure.com](http://vwa.westeurope.cloudapp.azure.com)
+# Sběrna surovin
+> Projekt byl vytvořen v rámci kurzu _Vývoj webových aplikací_ v zimním semestru 2022/2023.<br>
+> Aplikace je v době vývoje projektu dostupná na adrese [http://vwa.westeurope.cloudapp.azure.com](http://vwa.westeurope.cloudapp.azure.com)
 ## Specifikace požadavků na aplikaci
 ## Popis uživatelských skupin
-### Role
+## Role
  - administrátor
  - zaměstnanec
  - registrovaný zákazník
  - nepřihlášený uživatel
-### Požadavky
-#### Administrátor
+## Požadavky
+##### Administrátor
  - přihlášení
  - odhlášení
  - přidání nového uživatele
- - smazání existujícího uživatele
+ - odstranění existujícího uživatele
  - ban uživatele
  - úprava uživatele
  - úprava ceníku
  - potvrzení registrace zákazníka
  - přidání záznamu o sběru
- - zobrazení historie svého sběru za měsíc
- - zobrazení historie svého sběru za 1/2 roku
- - zobrazení historie svého sběru za rok
+ - zobrazení historie svého sběru
  - změna svých údajů
  - sledování statistik sběrny
  - sledování cen materiálů
@@ -30,18 +28,14 @@
  - odhlášení
  - potvrzení registrace zákazníka
  - přidání záznamu o sběru
- - zobrazení historie svého sběru za měsíc
- - zobrazení historie svého sběru za 1/2 roku
- - zobrazení historie svého sběru za rok
+ - zobrazení historie svého sběru
  - změna svých údajů
  - sledování statistik sběrny
  - sledování cen materiálů
 #### Registrovaný zákazník
  - přihlášení
  - odhlášení
- - zobrazení historie svého sběru za měsíc
- - zobrazení historie svého sběru za 1/2 roku
- - zobrazení historie svého sběru za rok
+ - zobrazení historie svého sběru
  - změna svých údajů
  - sledování statistik sběrny
  - sledování cen materiálů
