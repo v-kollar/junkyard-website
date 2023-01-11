@@ -1,6 +1,16 @@
 {% extends 'main.jinja2' %}
 {% block title %}<title>Zadání sběru | Sběrné suroviny</title>{% endblock %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=false) %}
+{% if messages %}
+  {% for message in messages %}
+	<section>
+	<h2 class="flash_message">{{ message }}</h2>
+	</section>
+  {% endfor %}
+{% endif %}    
+{% endwith %}
+
 
 <h1 class="headline">
 Zadání sběru
@@ -13,40 +23,40 @@ Zadání sběru
 
   <input type="submit" class="btn" value="Zadat sběr">
 
-</div>
-</form>
 
+<div class="row" id="left">
 
-<div class="row">
-
-<div class="col price">
+<div class="col name">
   <h2>Název</h2>
   {% for i in materials %}
-	<form method="POST">
-    <p>{{i[1]}}</p>
-  </form>
+	<label>
+  <p>{{i[1]}}</p>
+  </label>
   {% endfor %}
 </div>
 
 <div class="col weight">
   <h2>Hmotnost</h2>
 	{% for i in materials %}
-	<form method="POST">
-	<input id="weight" type="text" name="{{i[0]}}"></input>
-	</form>
+	<label id="widen">
+	<input id="weight"
+	       type="text" name="{{i[0]}}"></input>
+	</label>
 	{% endfor %}
 </div>
 
 <div class="col origin">
-<h2>Původ</h2>
+  <h2>Původ</h2>
   {% for i in materials %}
-	<form method="POST">
-	<input id="origin" type="text" name="{{i[0]}}"></input>
+	<label id="widen">
+	<input id="origin" 
+	       type="text" name="{{i[0]}}"></input>
+	</label>
 	{% endfor %}
 </div>
 
 </div>
-
+</form>
 
 
 {% endblock %}

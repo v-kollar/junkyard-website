@@ -43,7 +43,7 @@ section p {
 .flash_message {
 	padding-top: 10px;
 	padding-bottom: 10px;
-	animation: hide_message 0s ease-in 3s;
+	animation: hide_message 0s ease-in 2s;
 	animation-fill-mode: forwards;
 
 }
@@ -322,15 +322,13 @@ h2.stats {
 }
 
 .col > form > button {
-	margin-top: 7px;
+	margin-top: 8px;
 	font-size: 20px;
   /* width: 150px; */
 	border: 1px solid gray;
   background-color: white;
   cursor: pointer;
 }
-
-
 
 /* Detaily sberu */
 
@@ -494,10 +492,15 @@ h2.stats {
 
 /* Zadání sběru */
 
+.name > p {
+	margin-top: 7px;
+}
+
 .collection__modification div {
-	font-size: 22px;
+	font-size: 19px;
 	float: left;
 	margin-right: 20px;
+	margin-top: 10px;
 }
 
 .collection__modification input {
@@ -517,10 +520,6 @@ h2.stats {
 .collection__modification input,
 .collection__modification label {
   display: block;
-}
-
-.collection__modification input {
-	padding-left: 10px;
 }
 
 .collection__modification .wrapper {
@@ -572,6 +571,7 @@ h2.stats {
 	margin-bottom: 15%;
 } 
 
+
 .total-value {
   display: inline-block;
 	user-select: none;
@@ -605,10 +605,6 @@ h2.stats {
 	margin-left: -10%;
 }
 
-.weight, .origin {
-	width: 97%;
-}
-
 /* Statistiky a změna ceníku */
 
 .row {
@@ -624,7 +620,11 @@ h2.stats {
 }
 
 .col.price p {
-	margin-top: 7px;
+	margin-top: 8px;
+}
+
+.col.name p {
+	margin-top: 10px;
 }
 
 .col.date p {
@@ -645,6 +645,20 @@ h2.stats {
 	padding-bottom: 1%;
 	display: table-cell;
 	text-align: center;
+}
+
+#widen {
+	width: 99%;
+	height: 10%;
+	font-size: 20px;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	text-align: center;
+}
+
+#left {
+	margin-left: 0px;
+	width: 140%;
 }
 
 .pricelist-change-btn {
@@ -673,6 +687,7 @@ h2.stats {
 
 .pricelist-change-btn__name {
 	width: 100%;
+	padding-top: 1px;
   box-sizing: border-box;
 	display: block;
 }
@@ -696,6 +711,10 @@ h2.stats {
 
 .phone { 
 	margin-bottom: 8px;
+}
+
+#phone {
+	padding-left: 10px;
 }
 
 /* Muj ucet flex */
@@ -767,6 +786,10 @@ h2.stats {
 
 	.payout {
 		width: 80%;
+	}
+
+	.col.price p {
+	margin-top: 10px;
 	}
 }
 

@@ -429,7 +429,6 @@ def my_collections() -> ResponseReturnValue:
         return redirect('/profile/')
 
 @app.route('/profile/zadani-sberu',methods=['GET','POST'])
-
 def insert_collection() -> ResponseReturnValue:
     if "user" in session and (session['user'][0][2] == 1 or session['user'][0][2] == 2):
         connection = sqlite3.connect(DB_PATH)
@@ -437,17 +436,53 @@ def insert_collection() -> ResponseReturnValue:
             cursor = connection.cursor()
             query = "SELECT id_typu_materialu FROM typy_materialu"
             cursor.execute(query)
-            results=cursor.fetchall()
+            results=cursor.fetchall()  # [(29,), (30,), (31,), (32,), (33,), (34,), (35,)]
+            set = True
             for i in results:
-                material=(request.form.getlist(str(i[0])))
-                print(material[0])
+                material = (request.form.getlist(str(i[0])))
+                if material[0] != "" and material[1] != "":
+                    if set:
+                        query = "SELECT id_uzivatele from uzivatel WHERE telefon = '" + str(
+                            request.form['phone']) + "'"
+                        cursor.execute(query)
+                        user = cursor.fetchall()
+                        if len(user) == 0:
+                            flash("Uživatel s tímto telefon neexsituje",
+                                  category="succcess")
+                            return redirect('/profile/zadani-sberu')
+                        query = "INSERT INTO sbery (cas_odevzdani, id_uzivatele) VALUES(datetime('now'), '" + str(
+                            user[0][0]) + "')"
+                        connection.execute(query)
+                        connection.commit()
+                        query = "SELECT id_sberu FROM sbery WHERE id_uzivatele='" + str(
+                            user[0][
+                                0]) + "' ORDER BY cas_odevzdani DESC LIMIT 1"
+                        cursor.execute(query)
+                        collection_id = cursor.fetchall()
+                        set = False
+                    cursor = connection.cursor()
+                    query = "SELECT id_ceny FROM typy_materialu JOIN ceny ON (ceny.id_typu_materialu = typy_materialu.id_typu_materialu) WHERE datum_od <= datetime('now') AND datum_do >= datetime('now') AND ceny.id_typu_materialu = '" + str(
+                        i[0]) + "'"
+                    cursor.execute(query)
+                    price = cursor.fetchall()
+                    print("Cena", price[0][0])
+                    query = "INSERT INTO polozka (mnozstvi, puvod, id_typu_materialu, id_sberu, id_ceny) VALUES('" + str(
+                        material[0]) + "', '" + material[1] + "', '" + str(
+                        i[0]) + "', '" + str(
+                        collection_id[0][0]) + "', '" + str(price[0][0]) + "')"
+                    connection.execute(query)
+                    connection.commit()
+            if set == False:
+                flash("Sběr byl vložen", category="succcess")
+            return redirect('/profile/zadani-sberu')
         cursor = connection.cursor()
         query = "SELECT id_typu_materialu, nazev FROM typy_materialu"
         cursor.execute(query)
-        results=cursor.fetchall()
-        return render_template('add_collections.jinja2',materials=results)
+        results = cursor.fetchall()
+        return render_template('add_collections.jinja2', materials=results)
     else:
         return redirect('/profile/')
+
 
 @app.route('/profile/zmena-ceniku',methods=['GET','POST'])
 def change_pricelist() -> ResponseReturnValue:
