@@ -44,8 +44,6 @@ variables:
     --label com.gitlab.ci.mrurl=$CI_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_ID
 
 get-latest-git-version:
-  only:
-    - main
   stage: .pre
   image: 
     name: alpine/git
