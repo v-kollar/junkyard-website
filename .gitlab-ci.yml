@@ -3,17 +3,20 @@ stages:
   - build
   - deploy
 
+
 .test-template:
   stage: test
-  image: node:19-alpine3.16
   only:
     - main
   allow_failure: true
-  before_script:
-    - apk install python3-pip
+
+.python-test-template:
+  image: python:3.12.0a4-bullseye
+  extends: .test-template
 
 
 html-validate:
+  image: node:19-alpine3.16
   extends: .test-template
   before_script:
     - npm install -g html-validate
@@ -22,7 +25,7 @@ html-validate:
     - npx html-validate $(find . -name "*.jinja2")
 
 flake8:
-  extends: .test-template
+  extends: .python-test-template
   before_script:
     - pip install flake8
     - cd src/
@@ -30,7 +33,7 @@ flake8:
     - flake8 app.py
 
 mypy:
-  extends: .test-template
+  extends: .python-test-template
   before_script:
     - pip install mypy
     - cd src/
