@@ -140,7 +140,7 @@ build-docker-hub-registry:
 deploy-azure:
   image: ruby:3.2.0
   stage: deploy
-  needs: [docker-hub-build-registry]
+  needs: [build-docker-hub-registry]
   only:
     - main
   before_script:
