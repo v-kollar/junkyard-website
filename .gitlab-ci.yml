@@ -11,7 +11,7 @@ stages:
 
 
 html-validate:
-  extends: .test_template
+  extends: .test-template
   before_script:
     - apt-get install npm
     - npm install -g html-validate
@@ -20,7 +20,7 @@ html-validate:
     - npx html-validate $(find . -name "*.jinja2")
 
 flake8:
-  extends: .test_template
+  extends: .test-template
   before_script:
     - pip3 install flake8
     - cd src/
@@ -28,7 +28,7 @@ flake8:
     - flake8 app.py
 
 mypy:
-  extends: .test_template
+  extends: .test-template
   before_script:
     - pip3 install mypy
     - cd src/
