@@ -24,7 +24,7 @@ html-validate:
 flake8:
   extends: .test-template
   before_script:
-    - pip3 install flake8
+    - pip install flake8
     - cd src/
   script:
     - flake8 app.py
@@ -32,7 +32,7 @@ flake8:
 mypy:
   extends: .test-template
   before_script:
-    - pip3 install mypy
+    - pip install mypy
     - cd src/
   script:
     - mypy --strict app.py
