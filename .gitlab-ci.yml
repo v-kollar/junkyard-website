@@ -151,7 +151,7 @@ deploy-azure:
   before_script:
     - chmod 400 $SSH_KEY
   script:
-    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $HOST "
+    - ssh -o StrictHostKeyChecking=no -i $SSH_KEY vwaadmin@20.16.172.53 "
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD &&
         docker pull kkemis/vwa && docker container rm -f vwa || true &&
         docker run -d -v /home/vwaadmin:/app/database --name vwa -p 80:5001 kkemis/vwa"
