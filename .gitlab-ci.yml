@@ -154,5 +154,5 @@ deploy-azure:
     - ssh -o StrictHostKeyChecking=no -i $SSH_KEY $HOST "
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD &&
         docker pull kkemis/vwa && docker container rm -f vwa || true &&
-        docker run -d --name vwa -p 80:5001 kkemis/vwa"
+        docker run -d -v /home/vwaadmin:/app/database --name vwa -p 80:5001 kkemis/vwa"
   
